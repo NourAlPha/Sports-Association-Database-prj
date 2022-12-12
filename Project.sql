@@ -228,11 +228,12 @@ WHERE c.id NOT IN(select host_club from match) and c.id not in (select guest_clu
 GO
 
 CREATE PROC deleteMatch
-@first_club VARCHAR(20) , @second_club VARCHAR(20) , @host_club VARCHAR(20) , @start_time time
+@host_club VARCHAR(20) , @guest_club VARCHAR(20)
 AS
-delete from Match m
-where m.fist_club = @first_club AND m.second_club = @second_club AND m.host_club = @host_club
+delete from Match
+where host_club = dbo.getClubID(@host_club) AND guest_club = dbo.getClubID(@guest_club)
 GO
+
 
 CREATE PROC deleteMatchesOnStadium
 @stadium_name VARCHAR(20)
@@ -275,5 +276,3 @@ where Stadium.name = @name;
 GO
 
 
---- testtttt
---- MYTOUCH
