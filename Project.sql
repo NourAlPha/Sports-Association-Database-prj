@@ -1,4 +1,4 @@
-CREATE DATABASE Project;
+CREATE DATABASE Project2;
 
 GO
 CREATE PROC createAllTables
@@ -247,13 +247,26 @@ GO
 CREATE PROC addClub
 @name VARCHAR(20) , @location VARCHAR(20)
 AS
-INSERT INTO Club(name , location) Values(@name , @location );
+INSERT INTO Club(name , location) Values(@name , @location);
 GO
-------------------Ticket------------------
-CREATE PROC addTicket
-@host_club VARCHAR(20) , @competing_club VARCHAR(20) , @date_time date
-AS
 
+CREATE FUNCTION getMatchID(@hname varchar(20) , @gname varchar(20), @date datetime) 
+RETURNS INT
+BEGIN
+DECLARE @res int
+SELECT @res = m.id
+FROM Match m, Club c1, Club c2
+WHERE c1.name = @hname AND C2.name = @gname AND c1.id = m.host_club AND c2.id = m.guest_club AND m.starting_time = @date
+RETURN @res
+END
+GO
+
+
+CREATE PROC addTicket
+@host_club VARCHAR(20) , @guest_club VARCHAR(20) , @date_time datetime
+AS
+INSERT INTO Ticket (match_id) VALUES (dbo.getMatchID(@host_club, @guest_club, @date_time));
+go
 
 CREATE PROC deleteClub
 @name VARCHAR(20)
