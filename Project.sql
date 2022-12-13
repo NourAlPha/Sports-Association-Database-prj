@@ -93,7 +93,7 @@ id int PRIMARY KEY IDENTITY,
 representative_id int Foreign KEY references Representative,
 manager_id int Foreign KEY references Manager,
 match_id int Foreign KEY references Match,
-status bit
+status bit default NULL
 );
 GO
 
@@ -367,7 +367,7 @@ CREATE PROC addHostRequest
 @stadium_name VARCHAR(20),
 @date_time datetime
 AS
-INSERT INTO Host_Request VALUES(dbo.getRepresentativeID(@club_name), dbo.getManagerID(@stadium_name), dbo.getMatchID1(@club_name, @date_time), 0)
+INSERT INTO Host_Request VALUES(dbo.getRepresentativeID(@club_name), dbo.getManagerID(@stadium_name), dbo.getMatchID1(@club_name, @date_time), NULL)
 GO
 
 CREATE FUNCTION allUnassignedMatches(@club_name VARCHAR(20))
@@ -381,13 +381,94 @@ WHERE m.host_club = c1.id AND m.guest_club = c2.id AND m.stadium_id IS NULL AND 
 )
 GO
 
+CREATE FUNCTION getStadiumID(@stadium_name VARCHAR(20))
+RETURNS INT
+BEGIN
+DECLARE @id INT
+SELECT @id = id
+FROM Stadium 
+WHERE name = @stadium_name
+RETURN @id
+END
+GO
+
+
 CREATE PROC addStadiumManager
 @name VARCHAR(20),
 @stadium_name VARCHAR(20),
 @username VARCHAR(20),
 @password VARCHAR(20)
 AS
-INSERT INTO Manager values(@name, @stadiumname, @username)
+INSERT INTO Manager values(@name, @username, dbo.getStadiumID(@stadium_name))
 INSERT INTO Super_User values(@username, @password)
 GO
 
+CREATE FUNCTION getManagerID2(@username VARCHAR(20))
+RETURNS INT
+BEGIN
+DECLARE @id INT
+SELECT @id = id
+FROM Manager 
+WHERE username = @username
+RETURN @id
+END
+GO
+
+CREATE FUNCTION allPendingRequests (@username VARCHAR(20))
+RETURNS TABLE 
+AS
+RETURN
+(
+SELECT R.name AS Rep_name, C.name AS Club_name, M.starting_time
+FROM Representative R , Club C, Match M, Host_Request H
+WHERE H.representative_id = R.id AND H.manager_id = dbo.getManagerID2(@username) AND H.match_id = M.id AND C.id = M.guest_club AND R.club_id = M.guest_club
+) 
+GO
+
+CREATE PROC acceptRequest
+@managerUserName VARCHAR(20),
+@hostClub VARCHAR(20),
+@guestClub VARCHAR(20),
+@startTime datetime
+AS
+update host_request
+set status = 1
+where manager_id = dbo.getManagerID2(@managerUserName) and representative_ID = dbo.getRepresentativeID(@hostClub) and match_ID = dbo.getMatchID(@hostClub, @guestClub, @startTime)
+GO
+
+CREATE PROC rejectRequest
+@managerUserName VARCHAR(20),
+@hostClub VARCHAR(20),
+@guestClub VARCHAR(20),
+@startTime datetime
+AS
+update host_request
+set status = 0
+where manager_id = dbo.getManagerID2(@managerUserName) and representative_ID = dbo.getRepresentativeID(@hostClub) and match_ID = dbo.getMatchID(@hostClub, @guestClub, @startTime)
+GO
+
+CREATE PROC addFan 
+@name VARCHAR(20),
+@username VARCHAR(20),
+@password VARCHAR(20),
+@national_id VARCHAR(20),
+@birth_date datetime,
+@phone_num VARCHAR(20),
+@address VARCHAR(20)
+AS
+INSERT INTO Fan VALUES(@national_id, @name, @birth_date, @address, @phone_num, 0, @username)
+INSERT INTO Super_User VALUES(@username, @password)
+GO
+
+CREATE FUNCTION upcomingMatchesOfClub(@club_name varchar(20))
+RETURNS TABLE 
+AS
+RETURN
+(
+SELECT c1.name as Club_Name , c2.name as Competing_Club , m.starting_time , s.name as Stadium_ID
+FROM Club C1, Club C2, Match M, Stadium S
+WHERE M.starting_time > CURRENT_TIMESTAMP AND C1.id = dbo.getClubID(@club_name) AND M.stadium_id = S.id AND 
+)
+GO
+
+CREATE FUNCTION availableMatchesToAttend(@datetime date    
