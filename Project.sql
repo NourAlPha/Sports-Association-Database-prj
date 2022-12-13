@@ -66,7 +66,7 @@ stadium_id int Foreign KEY references Stadium
 );
 
 CREATE TABLE Fan(
-id int PRIMARY KEY,
+national_id VARCHAR(20) PRIMARY KEY,
 name varchar(20),
 birth_date datetime,
 address varchar(20),
@@ -75,6 +75,8 @@ status bit,
 username varchar(20) Foreign KEY references Super_User
 );
 
+
+
 CREATE TABLE Ticket(
 id int PRIMARY KEY IDENTITY,
 status varchar(20),
@@ -82,7 +84,7 @@ match_id int references Match,
 );
 
 CREATE TABLE Ticket_Buying_Transactions(
-fan_id int Foreign KEY references Fan,
+fan_id VARCHAR(20) Foreign KEY references Fan,
 ticket_id int Foreign KEY references Ticket
 );
 
@@ -287,5 +289,32 @@ AS
 delete from Stadium
 where Stadium.name = @name;
 GO
+
+CREATE PROC blockFan 
+@national_id VARCHAR(20)
+AS
+UPDATE Fan
+SET status = 1 WHERE @national_id = national_id;
+GO
+
+CREATE PROC unblockFan 
+@national_id VARCHAR(20)
+AS
+UPDATE Fan
+SET status = 0 WHERE @national_id = national_id;
+GO
+
+CREATE PROC addRepresentative
+@name VARCHAR(20),
+@club_name VARCHAR(20),
+@representative_username VARCHAR(20),
+@password VARCHAR(20)
+AS
+INSERT INTO Representative VALUES(@representative_username, @name, dbo.getClubID(@club_name))
+INSERT INTO Super_User VALUES(@representative_username, @password)
+GO
+
+
+
 
 
