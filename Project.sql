@@ -349,6 +349,7 @@ FROM Manager m, Stadium s
 WHERE s.name = @name AND m.stadium_id = s.id
 RETURN @res
 END
+GO
 
 CREATE FUNCTION getRepresentativeID(@club_name VARCHAR(20))
 RETURNS INT
@@ -359,6 +360,7 @@ FROM Representative r, Club c
 WHERE c.name = @club_name AND r.club_id = c.id
 RETURN @res
 END
+GO
 
 CREATE PROC addHostRequest
 @club_name VARCHAR(20),
@@ -366,5 +368,26 @@ CREATE PROC addHostRequest
 @date_time datetime
 AS
 INSERT INTO Host_Request VALUES(dbo.getRepresentativeID(@club_name), dbo.getManagerID(@stadium_name), dbo.getMatchID1(@club_name, @date_time), 0)
+GO
+
+CREATE FUNCTION allUnassignedMatches(@club_name VARCHAR(20))
+RETURNS TABLE
+AS
+RETURN
+(
+SELECT c2.name, m.starting_time
+FROM Match m, Club c1, Club c2
+WHERE m.host_club = c1.id AND m.guest_club = c2.id AND m.stadium_id IS NULL AND c1.name = @club_name
+)
+GO
+
+CREATE PROC addStadiumManager
+@name VARCHAR(20),
+@stadium_name VARCHAR(20),
+@username VARCHAR(20),
+@password VARCHAR(20)
+AS
+INSERT INTO Manager values(@name, @stadiumname, @username)
+INSERT INTO Super_User values(@username, @password)
 GO
 
