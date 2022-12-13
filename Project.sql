@@ -612,15 +612,18 @@ ORDER BY COUNT(tbt.match_id) DESC
 )
 GO
 
+
+
+
 --returns a table containing the name of the host club and the name of the guest club of all matches that are requested to be hosted on the given stadium sent by the representative ofthe given club.
 Create Function requestsFromClub(@clubName VARCHAR(20), @stadiumName VARCHAR(20))
 RETURNS TABLE
 AS
 RETURN
 (
-SELECT c1.name AS hostClub, c2.name AS guestClub
-FROM Match m, Club c1, Club c2
-WHERE 
+SELECT dbo.getClubName(m.host_club) AS hostClub, dbo.getClubName(m.guest_club) AS guestClub
+FROM Match m,  Host_Request h
+WHERE h.representative_ID = dbo.getRepresentativeID(@clubName) AND h.manager_id = dbo.getManagerID(@stadiumName) AND h.match_id = m.id
 )
 GO
 
