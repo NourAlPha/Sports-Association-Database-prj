@@ -460,15 +460,178 @@ INSERT INTO Fan VALUES(@national_id, @name, @birth_date, @address, @phone_num, 0
 INSERT INTO Super_User VALUES(@username, @password)
 GO
 
-CREATE FUNCTION upcomingMatchesOfClub(@club_name varchar(20))
-RETURNS TABLE 
+CREATE FUNCTION getClubName(@id int)
+RETURNS VARCHAR(20)
+BEGIN 
+DECLARE @res VARCHAR(20)
+SELECT @res = name 
+From Club
+where id = @id
+return @res
+END
+GO
+
+CREATE FUNCTION getStadiumName(@id int)
+RETURNS VARCHAR(20)
+BEGIN 
+DECLARE @res VARCHAR(20)
+SELECT @res = name 
+From Stadium
+where id = @id
+return @res
+END
+GO
+
+
+
+CREATE FUNCTION upcomingMatchesOfClub(@clubName VARCHAR(20))
+RETURNS @res Table(firstClub VARCHAR(20), secondClub VARCHAR(20), start datetime, place VARCHAR(20))
+AS
+BEGIN
+declare @inputClubID int = dbo.getClubID(@clubName)
+declare @temp Table(id int, startTime datetime, endingTime datetime, hostClub int, guestClub int, stadiumId int)
+
+INSERT INTO @temp(id, startTime, endingTime, hostClub, guestClub, stadiumID) 
+SELECT * FROM Match 
+WHERE starting_time > current_TimeStamp AND (host_club = @inputClubID OR guest_club = @inputClubID)
+
+INSERT INTO @res(firstClub, SecondClub, start, place)
+SELECT dbo.getClubName(hostClub), dbo.getClubName(guestClub), startTime, dbo.getStadiumName(stadiumID)
+FROM @temp
+
+return
+END
+GO
+
+Create FUNCTION availableMatchesToAttend(@date_time datetime)
+RETURNS TABLE
 AS
 RETURN
-(
-SELECT c1.name as Club_Name , c2.name as Competing_Club , m.starting_time , s.name as Stadium_ID
-FROM Club C1, Club C2, Match M, Stadium S
-WHERE M.starting_time > CURRENT_TIMESTAMP AND C1.id = dbo.getClubID(@club_name) AND M.stadium_id = S.id AND 
+(   
+SELECT Distinct (c1.name, c2.name, m.starting_time, s.name)
+FROM Match m, Club c1, Club c2, Stadium s , Ticket t
+WHERE t.match_id = m.id And t.status = 1 AND  m.host_club = c1.id AND m.guest_club = c2.id AND m.stadium_id = s.id AND m.starting_time > @date_time
 )
 GO
 
-CREATE FUNCTION availableMatchesToAttend(@datetime date    
+CREATE FUNCTION getTicketId(@match_id int)
+RETURNS INT
+BEGIN
+DECLARE @id INT
+SELECT TOP 1 @id = id
+FROM Ticket 
+WHERE match_id = @match_id AND status = 1
+RETURN @id
+END
+Go
+
+CREATE PROC purchaseTicket
+@fan_national_id VARCHAR(20),
+@host_club VARCHAR(20),
+@guest_club VARCHAR(20),
+@date_time datetime
+AS
+Insert into Ticket_Buying_Transactions values(@fan_national_id, dbo.getTicketId(dbo.getMatchID(@host_club, @guest_club, @date_time)))
+UPDATE Ticket
+SET status = 0
+WHERE id = dbo.getTicketId(dbo.getMatchID(@host_club, @guest_club, @date_time))
+GO
+
+
+CREATE PROC updateMatchHost
+@host_club VARCHAR(20),
+@guest_club VARCHAR(20),
+@date_time datetime
+AS
+UPDATE Match
+SET host_club = dbo.getClubID(@guest_club) , guest_club = dbo.getClubID(@host_club)
+WHERE id = dbo.getMatchID(@host_club, @guest_club, @date_time)
+GO
+
+
+-- Fetches all club names and the number of matches they have already played
+CREATE view matchesPerTeam
+AS
+SELECT c.name, COUNT(m.id) AS matches
+FROM Club c, Match m
+WHERE m.starting_time < current_TimeStamp AND c.id = m.host_club OR c.id = m.guest_club 
+GROUP BY c.name
+GO
+
+--Fetches pair of club names (first club name and second club name) which have never played against each other.
+CREATE view clubsNeverMatched
+AS
+SELECT c1.name AS firstClub, c2.name AS secondClub
+FROM Club c1, Club c2
+WHERE c1.id <> c2.id AND NOT EXISTS 
+(SELECT * FROM Match m WHERE (m.host_club = c1.id AND m.guest_club = c2.id) OR (m.host_club = c2.id AND m.guest_club = c1.id))
+GO
+
+--returns a table containing all club names which the given club has never competed against.
+CREATE Function clubsNeverPlayed(@clubName VARCHAR(20))
+RETURNS TABLE
+AS
+RETURN
+(
+SELECT c.name
+FROM Club c
+WHERE c.id <> dbo.getClubID(@clubName) AND NOT EXISTS
+(SELECT * FROM Match m 
+    WHERE (m.host_club = dbo.getClubID(@clubName) AND m.guest_club = c.id) OR (m.host_club = c.id AND m.guest_club = dbo.getClubID(@clubName)))
+)
+GO
+
+--returns a table containing the name of the host club and the name of the guest club of the match which sold the highest number of tickets so far.
+CREATE FUNCTION matchWithHighestAttendance()
+RETURNS TABLE
+AS
+RETURN
+(
+SELECT c1.name AS hostClub, c2.name AS guestClub
+FROM Match m, Club c1, Club c2
+WHERE m.host_club = c1.id AND m.guest_club = c2.id AND m.id =
+(SELECT TOP 1 match_id
+FROM Ticket_Buying_Transactions
+GROUP BY match_id
+ORDER BY COUNT(match_id) DESC)
+)
+GO
+
+
+--returns a table containing the name of the host club and the name of the guest club of all played matches sorted descendingly by the total number of tickets they have sold.
+CREATE FUNCTION matchesRankedByAttendance()
+RETURNS TABLE
+AS
+RETURN
+(
+SELECT c1.name AS hostClub, c2.name AS guestClub, COUNT(tbt.match_id) AS ticketsSold
+FROM Match m, Club c1, Club c2, Ticket_Buying_Transactions tbt
+WHERE m.host_club = c1.id AND m.guest_club = c2.id AND m.id = tbt.match_id
+GROUP BY c1.name, c2.name
+ORDER BY COUNT(tbt.match_id) DESC
+)
+GO
+
+--returns a table containing the name of the host club and the name of the guest club of all matches that are requested to be hosted on the given stadium sent by the representative ofthe given club.
+Create Function requestsFromClub(@clubName VARCHAR(20), @stadiumName VARCHAR(20))
+RETURNS TABLE
+AS
+RETURN
+(
+SELECT c1.name AS hostClub, c2.name AS guestClub
+FROM Match m, Club c1, Club c2
+WHERE 
+)
+GO
+
+
+
+
+
+
+
+
+
+
+
+
