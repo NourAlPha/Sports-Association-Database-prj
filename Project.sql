@@ -314,7 +314,57 @@ INSERT INTO Representative VALUES(@representative_username, @name, dbo.getClubID
 INSERT INTO Super_User VALUES(@representative_username, @password)
 GO
 
+CREATE FUNCTION viewAvailableStadiumsOn
+(@date datetime)
+RETURNS TABLE
+AS
+RETURN
+(
+SELECT s.name, s.location, s.capacity
+FROM Stadium s
+WHERE s.id NOT IN
+(SELECT m.stadium_id
+FROM Match m
+WHERE m.starting_time = @date)
+)
+GO
 
+CREATE FUNCTION getMatchID1(@name varchar(20), @date datetime) 
+RETURNS INT
+BEGIN
+DECLARE @res int
+SELECT @res = m.id
+FROM Match m, Club c1
+WHERE c1.name = @name AND c1.id = m.host_club AND m.starting_time = @date
+RETURN @res
+END
+GO
 
+CREATE FUNCTION getManagerID(@name VARCHAR(20))
+RETURNS INT
+BEGIN
+DECLARE @res int
+SELECT @res = m.id
+FROM Manager m, Stadium s
+WHERE s.name = @name AND m.stadium_id = s.id
+RETURN @res
+END
 
+CREATE FUNCTION getRepresentativeID(@club_name VARCHAR(20))
+RETURNS INT
+BEGIN
+DECLARE @res int
+SELECT @res = r.id
+FROM Representative r, Club c
+WHERE c.name = @club_name AND r.club_id = c.id
+RETURN @res
+END
+
+CREATE PROC addHostRequest
+@club_name VARCHAR(20),
+@stadium_name VARCHAR(20),
+@date_time datetime
+AS
+INSERT INTO Host_Request VALUES(dbo.getRepresentativeID(@club_name), dbo.getManagerID(@stadium_name), dbo.getMatchID1(@club_name, @date_time), 0)
+GO
 
