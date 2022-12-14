@@ -630,3 +630,57 @@ FROM Match m,  Host_Request h
 WHERE h.representative_ID = dbo.getRepresentativeID(@clubName) AND h.manager_id = dbo.getManagerID(@stadiumName) AND h.match_id = m.id
 )
 GO
+
+Create PROC deleteAllProcs
+AS
+BEGIN
+declare @procName varchar(500)
+declare cur cursor 
+
+for select [name] from sys.objects where type = 'p'
+open cur
+fetch next from cur into @procName
+while @@fetch_status = 0
+begin
+    exec('drop procedure [' + @procName + ']')
+    fetch next from cur into @procName
+end
+close cur
+deallocate cur
+END
+GO
+
+Create Proc deleteAllFunctions
+AS
+BEGIN
+Declare @sql NVARCHAR(MAX) = N'';
+
+SELECT @sql = @sql + N' DROP FUNCTION ' 
+                   + QUOTENAME(SCHEMA_NAME(schema_id)) 
+                   + N'.' + QUOTENAME(name)
+FROM sys.objects
+WHERE type_desc LIKE '%FUNCTION%';
+Exec sp_executesql @sql
+GO
+END
+GO
+
+Create Proc deleteAllViews
+AS
+BEGIN
+DECLARE @sql VARCHAR(MAX) = ''
+        , @crlf VARCHAR(2) = CHAR(13) + CHAR(10) ;
+
+SELECT @sql = @sql + 'DROP VIEW ' + QUOTENAME(SCHEMA_NAME(schema_id)) + '.' + QUOTENAME(v.name) +';' + @crlf
+FROM   sys.views v
+END
+GO
+
+Create Proc dropAllProceduresFunctionsViews
+AS
+BEGIN
+EXEC deleteAllProcs
+EXEC deleteAllFunctions
+EXEC deleteAllViews
+END
+GO
