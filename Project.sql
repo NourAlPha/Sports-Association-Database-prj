@@ -1,4 +1,4 @@
-CREATE DATABASE Project2;
+CREATE DATABASE Project;
 
 GO
 CREATE PROC createAllTables
@@ -155,7 +155,7 @@ where s.id = m.stadium_id AND m.username = su.username;
 GO
 
 CREATE VIEW allFans AS
-Select f.username , s.password , f.name, f.id, f.birth_date, f.status
+Select f.username , s.password , f.name, f.national_id, f.birth_date, f.status
 From Fan f , Super_User s 
 WHERE f.username = s.username;
 GO
@@ -187,7 +187,6 @@ CREATE VIEW allRequests AS
 SELECT r.username AS Representative_Username , m.username As Manager_Username , h.status
 From Representative r , Manager m , Host_Request h
 where r.id = h.representative_id AND m.id = h.manager_id;
-
 GO
 
 ----------------------ALL_Tickets and All_Matches --------------------------------------------
@@ -198,9 +197,10 @@ CREATE PROC addAssociationManager
 @user_name VARCHAR(20),
 @password VARCHAR(20)
 AS
-INSERT INTO Association_Manager VALUES(@name, @user_name);
 INSERT INTO Super_User VALUES(@user_name, @password)
+INSERT INTO Association_Manager VALUES(@name, @user_name);
 GO
+
 
 CREATE FUNCTION getClubID (@name varchar(20))
 RETURNS INT
@@ -310,8 +310,8 @@ CREATE PROC addRepresentative
 @representative_username VARCHAR(20),
 @password VARCHAR(20)
 AS
-INSERT INTO Representative VALUES(@representative_username, @name, dbo.getClubID(@club_name))
 INSERT INTO Super_User VALUES(@representative_username, @password)
+INSERT INTO Representative VALUES(@representative_username, @name, dbo.getClubID(@club_name))
 GO
 
 CREATE FUNCTION viewAvailableStadiumsOn
@@ -369,7 +369,7 @@ CREATE PROC addHostRequest
 AS
 INSERT INTO Host_Request VALUES(dbo.getRepresentativeID(@club_name), dbo.getManagerID(@stadium_name), dbo.getMatchID1(@club_name, @date_time), NULL)
 GO
-
+------------------------------>>>>>>>>>>>>>>>>>>>>
 CREATE FUNCTION allUnassignedMatches(@club_name VARCHAR(20))
 RETURNS TABLE
 AS
@@ -399,9 +399,10 @@ CREATE PROC addStadiumManager
 @username VARCHAR(20),
 @password VARCHAR(20)
 AS
-INSERT INTO Manager values(@name, @username, dbo.getStadiumID(@stadium_name))
 INSERT INTO Super_User values(@username, @password)
+INSERT INTO Manager values(@name, @username, dbo.getStadiumID(@stadium_name))
 GO
+
 
 CREATE FUNCTION getManagerID2(@username VARCHAR(20))
 RETURNS INT
@@ -456,9 +457,10 @@ CREATE PROC addFan
 @phone_num VARCHAR(20),
 @address VARCHAR(20)
 AS
-INSERT INTO Fan VALUES(@national_id, @name, @birth_date, @address, @phone_num, 0, @username)
 INSERT INTO Super_User VALUES(@username, @password)
+INSERT INTO Fan VALUES(@national_id, @name, @birth_date, @address, @phone_num, 0, @username)
 GO
+
 
 CREATE FUNCTION getClubName(@id int)
 RETURNS VARCHAR(20)
@@ -508,7 +510,7 @@ RETURNS TABLE
 AS
 RETURN
 (   
-SELECT Distinct (c1.name, c2.name, m.starting_time, s.name)
+SELECT Distinct c1.name as first_Club, c2.name second_Club, m.starting_time, s.name stadium_Name
 FROM Match m, Club c1, Club c2, Stadium s , Ticket t
 WHERE t.match_id = m.id And t.status = 1 AND  m.host_club = c1.id AND m.guest_club = c2.id AND m.stadium_id = s.id AND m.starting_time > @date_time
 )
@@ -590,26 +592,28 @@ RETURN
 SELECT c1.name AS hostClub, c2.name AS guestClub
 FROM Match m, Club c1, Club c2
 WHERE m.host_club = c1.id AND m.guest_club = c2.id AND m.id =
-(SELECT TOP 1 match_id
-FROM Ticket_Buying_Transactions
-GROUP BY match_id
-ORDER BY COUNT(match_id) DESC)
+(SELECT TOP 1 t.match_id
+FROM Ticket_Buying_Transactions tbt , Ticket t
+where t.id = tbt.ticket_id
+GROUP BY t.match_id
+ORDER BY COUNT(t.match_id) DESC)
 )
 GO
 
 
 --returns a table containing the name of the host club and the name of the guest club of all played matches sorted descendingly by the total number of tickets they have sold.
 CREATE FUNCTION matchesRankedByAttendance()
-RETURNS TABLE
+RETURNS @res Table(hostClub VARCHAR(20), guestClub VARCHAR(20), ticketsSold int)
 AS
-RETURN
-(
-SELECT c1.name AS hostClub, c2.name AS guestClub, COUNT(tbt.match_id) AS ticketsSold
-FROM Match m, Club c1, Club c2, Ticket_Buying_Transactions tbt
-WHERE m.host_club = c1.id AND m.guest_club = c2.id AND m.id = tbt.match_id
+BEGIN
+INSERT INTO @res(hostClub , guestClub , ticketsSold)
+SELECT c1.name AS hostClub, c2.name AS guestClub, COUNT(t.match_id) AS ticketsSold
+FROM Match m, Club c1, Club c2, Ticket_Buying_Transactions tbt , Ticket t
+WHERE m.host_club = c1.id AND m.guest_club = c2.id AND m.id = t.match_id AND t.id = tbt.ticket_id
 GROUP BY c1.name, c2.name
-ORDER BY COUNT(tbt.match_id) DESC
-)
+ORDER BY COUNT(t.match_id) DESC
+RETURN
+END
 GO
 
 
@@ -626,15 +630,3 @@ FROM Match m,  Host_Request h
 WHERE h.representative_ID = dbo.getRepresentativeID(@clubName) AND h.manager_id = dbo.getManagerID(@stadiumName) AND h.match_id = m.id
 )
 GO
-
-
-
-
-
-
-
-
-
-
-
-
