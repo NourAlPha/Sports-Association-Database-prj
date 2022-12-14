@@ -11,13 +11,13 @@ create table Super_User(
 create table System_Admin(
 	id int PRIMARY KEY,
 	name varchar(20),
-    username varchar(20) Foreign KEY references Super_User
+    username varchar(20) Foreign KEY references Super_User ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 create table Association_Manager(
     id int primary key identity,
 	name varchar(20),
-    username varchar(20) references Super_User,
+    username varchar(20) references Super_User ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 
@@ -29,9 +29,9 @@ location VARCHAR(20)
 
 create table Representative(
     id int primary key identity,
-	username varchar(20) Foreign KEY references Super_User,
+	username varchar(20) Foreign KEY references Super_User ON DELETE CASCADE ON UPDATE CASCADE,
 	name varchar(20),
-	club_id int Foreign KEY references Club
+	club_id int Foreign KEY references Club ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE Stadium(
@@ -45,24 +45,17 @@ status bit,
 create table Manager(
     id int primary key identity,
     name varchar(20),
-    username varchar(20) Foreign KEY references Super_User ,
-	stadium_id int Foreign KEY references Stadium
+    username varchar(20) Foreign KEY references Super_User ON DELETE CASCADE ON UPDATE CASCADE ,
+	stadium_id int Foreign KEY references Stadium ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE Match(
 id INT PRIMARY KEY IDENTITY,
 starting_time date,
 ending_time date,
-host_club INT references Club,
-guest_club INT references Club,
-stadium_id INT references Stadium
-);
-
-Create Table Stadium_Manager(
-id int primary key identity,
-name varchar(20),
-username varchar(20) Foreign KEY references Super_User,
-stadium_id int Foreign KEY references Stadium
+host_club INT references Club ON DELETE CASCADE ON UPDATE CASCADE, 
+guest_club INT references Club ON DELETE CASCADE ON UPDATE CASCADE,
+stadium_id INT references Stadium ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE Fan(
@@ -72,7 +65,7 @@ birth_date datetime,
 address varchar(20),
 phone_number varchar(20),
 status bit,
-username varchar(20) Foreign KEY references Super_User
+username varchar(20) Foreign KEY references Super_User ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 
@@ -80,19 +73,19 @@ username varchar(20) Foreign KEY references Super_User
 CREATE TABLE Ticket(
 id int PRIMARY KEY IDENTITY,
 status varchar(20),
-match_id int references Match,
+match_id int references Match ON DELETE CASCADE ON UPDATE CASCADE,
 );
 
 CREATE TABLE Ticket_Buying_Transactions(
-fan_id VARCHAR(20) Foreign KEY references Fan,
-ticket_id int Foreign KEY references Ticket
+fan_id VARCHAR(20) Foreign KEY references Fan ON DELETE CASCADE ON UPDATE CASCADE,
+ticket_id int Foreign KEY references Ticket ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE Host_Request(
 id int PRIMARY KEY IDENTITY,
-representative_id int Foreign KEY references Representative,
-manager_id int Foreign KEY references Manager,
-match_id int Foreign KEY references Match,
+representative_id int Foreign KEY references Representative ON DELETE CASCADE ON UPDATE CASCADE,
+manager_id int Foreign KEY references Manager ON DELETE CASCADE ON UPDATE CASCADE,
+match_id int Foreign KEY references Match ON DELETE CASCADE ON UPDATE CASCADE,
 status bit default NULL
 );
 GO
