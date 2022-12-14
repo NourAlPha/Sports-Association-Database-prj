@@ -616,9 +616,6 @@ RETURN
 END
 GO
 
-
-
-
 --returns a table containing the name of the host club and the name of the guest club of all matches that are requested to be hosted on the given stadium sent by the representative ofthe given club.
 Create Function requestsFromClub(@clubName VARCHAR(20), @stadiumName VARCHAR(20))
 RETURNS TABLE
@@ -631,28 +628,29 @@ WHERE h.representative_ID = dbo.getRepresentativeID(@clubName) AND h.manager_id 
 )
 GO
 
+
 Create PROC deleteAllProcs
 AS
-BEGIN
 declare @procName varchar(500)
 declare cur cursor 
-
 for select [name] from sys.objects where type = 'p'
 open cur
 fetch next from cur into @procName
 while @@fetch_status = 0
 begin
-    exec('drop procedure [' + @procName + ']')
-    fetch next from cur into @procName
+	IF @procName <> 'dropAllProceduresFunctionsViews' AND 
+	@procName <> 'deleteAllProcs'AND @procName <> 'deleteAllFunctions' AND @procName <> 'deleteAllViews'
+	BEGIN
+		exec('drop procedure [' + @procName + ']')
+	END
+	fetch next from cur into @procName
 end
 close cur
 deallocate cur
-END
 GO
 
 Create Proc deleteAllFunctions
 AS
-BEGIN
 Declare @sql NVARCHAR(MAX) = N'';
 
 SELECT @sql = @sql + N' DROP FUNCTION ' 
@@ -662,25 +660,29 @@ FROM sys.objects
 WHERE type_desc LIKE '%FUNCTION%';
 Exec sp_executesql @sql
 GO
-END
-GO
 
 Create Proc deleteAllViews
 AS
-BEGIN
-DECLARE @sql VARCHAR(MAX) = ''
-        , @crlf VARCHAR(2) = CHAR(13) + CHAR(10) ;
-
-SELECT @sql = @sql + 'DROP VIEW ' + QUOTENAME(SCHEMA_NAME(schema_id)) + '.' + QUOTENAME(v.name) +';' + @crlf
-FROM   sys.views v
-END
+Declare @viewName varchar(500) 
+Declare cur Cursor For Select [name] From sys.objects where type = 'v' 
+Open cur 
+Fetch Next From cur Into @viewName 
+While @@fetch_status = 0 
+Begin 
+ Exec('drop view ' + @viewName) 
+ Fetch Next From cur Into @viewName 
+End
+Close cur 
+Deallocate cur
 GO
 
 Create Proc dropAllProceduresFunctionsViews
 AS
 BEGIN
-EXEC deleteAllProcs
 EXEC deleteAllFunctions
 EXEC deleteAllViews
+EXEC deleteAllProcs
 END
 GO
+
+EXEC dropAllProceduresFunctionsViews
