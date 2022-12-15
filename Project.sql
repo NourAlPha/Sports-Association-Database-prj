@@ -35,7 +35,7 @@ create table Representative(
 );
 
 CREATE TABLE Stadium(
-	id INT PRIMARY KEY,
+	id INT PRIMARY KEY IDENTITY,
 	name VARCHAR(20),
 	capacity INT ,
 	location VARCHAR(20),
@@ -43,7 +43,7 @@ CREATE TABLE Stadium(
 );
 
 create table Manager(
-    id int primary key identity,
+    id int primary key IDENTITY,
     name varchar(20),
     username varchar(20) Foreign KEY references Super_User ,
 	stadium_id int Foreign KEY references Stadium
@@ -229,17 +229,16 @@ Go
 
 Go
 CREATE VIEW allAssocManagers AS
-Select a.username, a.name , s.password
+Select a.username, s.password , a.name
 From Association_Manager a INNER JOIN Super_User s ON s.username = a.username;
 Go
 
 
 CREATE VIEW allClubRepresentatives AS
-Select r.username, r.name as Representative_Name , c.name as Club_Name , s.password
+Select r.username,  s.password ,  r.name as Representative_Name , c.name as Club_Name
 From Representative r , Club c , Super_User s
 where c.id = r.id AND s.username = r.username;
 Go
-
 
 CREATE VIEW allStadiumManagers AS
 Select m.username , su.password , m.name, s.name as Stadium_Name
@@ -307,13 +306,14 @@ FROM Club c
 WHERE c.id NOT IN(select host_club from match) and c.id not in (select guest_club from match);
 GO
 
-create proc deleteMatchHelper @id int
-as
+create proc deleteMatchHelper 
+@id int
+AS
 delete from Ticket_Buying_Transactions where ticket_id in (select id from Ticket where match_id = @id);
 delete from Ticket where match_id = @id;
 delete from Host_Request where match_id = @id;
 delete from Match where id = @id;
-go
+GO
 
 CREATE PROC deleteMatch
 @host_club VARCHAR(20) , @guest_club VARCHAR(20)
@@ -340,16 +340,14 @@ GO
 CREATE PROC addClub
 @name VARCHAR(20) , @location VARCHAR(20)
 AS
-INSERT INTO Club(name , location) Values(@name , @location);
+INSERT INTO Club Values(@name , @location);
 GO
-
 
 CREATE PROC addTicket
 @host_club VARCHAR(20) , @guest_club VARCHAR(20) , @date_time datetime
 AS
-INSERT INTO Ticket (match_id) VALUES (dbo.getMatchID(@host_club, @guest_club, @date_time));
+INSERT INTO Ticket VALUES (1 , dbo.getMatchID(@host_club, @guest_club, @date_time));
 go
-
 
 create proc deleteClubHelper
 @id INT
@@ -370,11 +368,10 @@ select top 1 @id = id from Club where @name = name;
 exec deleteClubHelper @id;
 GO
 
-
 CREATE PROC addStadium
 @name VARCHAR(20) , @location VARCHAR(20) , @capacity INT
 AS
-INSERT INTO Stadium(name , location , capacity) values(@name , @location , @capacity);
+INSERT INTO Stadium values(@name , @capacity  , @location , 1);
 GO
 
 create proc deleteStadiumHelper
@@ -400,14 +397,14 @@ CREATE PROC blockFan
 @national_id VARCHAR(20)
 AS
 UPDATE Fan
-SET status = 1 WHERE @national_id = national_id;
+SET status = 0 WHERE @national_id = national_id;
 GO
 
 CREATE PROC unblockFan 
 @national_id VARCHAR(20)
 AS
 UPDATE Fan
-SET status = 0 WHERE @national_id = national_id;
+SET status = 1 WHERE @national_id = national_id;
 GO
 
 CREATE PROC addRepresentative
@@ -435,7 +432,6 @@ WHERE m.starting_time = @date)
 )
 GO
 
-
 CREATE PROC addHostRequest
 @club_name VARCHAR(20),
 @stadium_name VARCHAR(20),
@@ -449,7 +445,7 @@ RETURNS TABLE
 AS
 RETURN
 (
-SELECT c2.name, m.starting_time
+SELECT c2.name as Guest_Club, m.starting_time
 FROM Match m, Club c1, Club c2
 WHERE m.host_club = c1.id AND m.guest_club = c2.id AND m.stadium_id IS NULL AND c1.name = @club_name
 )
@@ -472,9 +468,9 @@ RETURNS TABLE
 AS
 RETURN
 (
-SELECT R.name AS Rep_name, C.name AS Club_name, M.starting_time
+SELECT R.name AS Representative_name, C.name AS Guest_Club, M.starting_time
 FROM Representative R , Club C, Match M, Host_Request H
-WHERE H.representative_id = R.id AND H.manager_id = dbo.getManagerID2(@username) AND H.match_id = M.id AND C.id = M.guest_club AND R.club_id = M.guest_club
+WHERE H.representative_id = R.id AND H.manager_id = dbo.getManagerID2(@username) AND H.match_id = M.id AND C.id = M.guest_club AND R.club_id = M.host_club
 ) 
 GO
 
@@ -509,16 +505,16 @@ CREATE PROC addFan
 @password VARCHAR(20),
 @national_id VARCHAR(20),
 @birth_date datetime,
-@phone_num VARCHAR(20),
-@address VARCHAR(20)
+@address VARCHAR(20),
+@phone_num VARCHAR(20)
 AS
 INSERT INTO Super_User VALUES(@username, @password)
-INSERT INTO Fan VALUES(@national_id, @name, @birth_date, @address, @phone_num, 0, @username)
+INSERT INTO Fan VALUES(@national_id, @name, @birth_date, @address, @phone_num, 1, @username)
 GO
 
 
 CREATE FUNCTION upcomingMatchesOfClub(@clubName VARCHAR(20))
-RETURNS @res Table(Host_Club VARCHAR(20), Guest_Club VARCHAR(20), start datetime, place VARCHAR(20))
+RETURNS @res Table(Host_Club VARCHAR(20), Guest_Club VARCHAR(20), start datetime, Stadium VARCHAR(20))
 AS
 BEGIN
 declare @inputClubID int = dbo.getClubID(@clubName)
@@ -526,7 +522,7 @@ declare @temp Table(id int, startTime datetime, endingTime datetime, hostClub in
 INSERT INTO @temp(id, startTime, endingTime, hostClub, guestClub, stadiumID) 
 SELECT * FROM Match 
 WHERE starting_time > current_TimeStamp AND (host_club = @inputClubID OR guest_club = @inputClubID)
-INSERT INTO @res(Host_Club, Guest_Club, start, place)
+INSERT INTO @res(Host_Club, Guest_Club, start, Stadium)
 SELECT dbo.getClubName(hostClub), dbo.getClubName(guestClub), startTime, dbo.getStadiumName(stadiumID)
 FROM @temp
 return
@@ -538,7 +534,7 @@ RETURNS TABLE
 AS
 RETURN
 (   
-SELECT Distinct c1.name as first_Club, c2.name second_Club, m.starting_time, s.name stadium_Name
+SELECT Distinct c1.name as Host_club, c2.name Guest_Club, m.starting_time, s.name stadium_Name
 FROM Match m, Club c1, Club c2, Stadium s , Ticket t
 WHERE t.match_id = m.id And t.status = 1 AND  m.host_club = c1.id AND m.guest_club = c2.id AND m.stadium_id = s.id AND m.starting_time > @date_time
 )
@@ -556,7 +552,6 @@ SET status = 0
 WHERE id = dbo.getTicketId(dbo.getMatchID(@host_club, @guest_club, @date_time))
 GO
 
-
 CREATE PROC updateMatchHost
 @host_club VARCHAR(20),
 @guest_club VARCHAR(20),
@@ -567,8 +562,6 @@ SET host_club = dbo.getClubID(@guest_club) , guest_club = dbo.getClubID(@host_cl
 WHERE id = dbo.getMatchID(@host_club, @guest_club, @date_time)
 GO
 
-
--- Fetches all club names and the number of matches they have already played
 CREATE view matchesPerTeam
 AS
 SELECT c.name, COUNT(m.id) AS matches
@@ -577,16 +570,14 @@ WHERE m.starting_time < current_TimeStamp AND c.id = m.host_club OR c.id = m.gue
 GROUP BY c.name
 GO
 
---Fetches pair of club names (first club name and second club name) which have never played against each other.
 CREATE view clubsNeverMatched
 AS
-SELECT c1.name AS firstClub, c2.name AS secondClub
+SELECT c1.name AS First_Club, c2.name AS Second_Club
 FROM Club c1, Club c2
 WHERE c1.id <> c2.id AND NOT EXISTS 
 (SELECT * FROM Match m WHERE (m.host_club = c1.id AND m.guest_club = c2.id) OR (m.host_club = c2.id AND m.guest_club = c1.id))
 GO
 
---returns a table containing all club names which the given club has never competed against.
 CREATE Function clubsNeverPlayed(@clubName VARCHAR(20))
 RETURNS TABLE
 AS
@@ -600,7 +591,6 @@ WHERE c.id <> dbo.getClubID(@clubName) AND NOT EXISTS
 )
 GO
 
---returns a table containing the name of the host club and the name of the guest club of the match which sold the highest number of tickets so far.
 CREATE FUNCTION matchWithHighestAttendance()
 RETURNS TABLE
 AS
@@ -617,8 +607,6 @@ ORDER BY COUNT(t.match_id) DESC)
 )
 GO
 
-
---returns a table containing the name of the host club and the name of the guest club of all played matches sorted descendingly by the total number of tickets they have sold.
 CREATE FUNCTION matchesRankedByAttendance()
 RETURNS @res Table(hostClub VARCHAR(20), guestClub VARCHAR(20), ticketsSold int)
 AS
@@ -633,13 +621,12 @@ RETURN
 END
 GO
 
---returns a table containing the name of the host club and the name of the guest club of all matches that are requested to be hosted on the given stadium sent by the representative ofthe given club.
-Create Function requestsFromClub(@clubName VARCHAR(20), @stadiumName VARCHAR(20))
+Create Function requestsFromClub(@stadiumName VARCHAR(20) , @clubName VARCHAR(20))
 RETURNS TABLE
 AS
 RETURN
 (
-SELECT dbo.getClubName(m.host_club) AS hostClub, dbo.getClubName(m.guest_club) AS guestClub
+SELECT dbo.getClubName(m.host_club) AS Host_Club, dbo.getClubName(m.guest_club) AS Guest_Club
 FROM Match m,  Host_Request h
 WHERE h.representative_ID = dbo.getRepresentativeID(@clubName) AND h.manager_id = dbo.getManagerID(@stadiumName) AND h.match_id = m.id
 )
