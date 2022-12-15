@@ -11,13 +11,13 @@ create table Super_User(
 create table System_Admin(
 	id int PRIMARY KEY IDENTITY,
 	name varchar(20),
-    username varchar(20) Foreign KEY references Super_User ON DELETE CASCADE ON UPDATE CASCADE
+    username varchar(20) Foreign KEY references Super_User 
 );
 
 create table Association_Manager(
     id int primary key identity,
 	name varchar(20),
-    username varchar(20) references Super_User ON DELETE CASCADE ON UPDATE CASCADE
+    username varchar(20) references Super_User 
 );
 
 
@@ -29,9 +29,9 @@ CREATE TABLE Club(
 
 create table Representative(
     id int primary key identity,
-	username varchar(20) Foreign KEY references Super_User ON DELETE CASCADE ON UPDATE CASCADE,
+	username varchar(20) Foreign KEY references Super_User,
 	name varchar(20),
-	club_id int Foreign KEY references Club ON DELETE CASCADE ON UPDATE CASCADE
+	club_id int Foreign KEY references Club
 );
 
 CREATE TABLE Stadium(
@@ -45,17 +45,17 @@ CREATE TABLE Stadium(
 create table Manager(
     id int primary key identity,
     name varchar(20),
-    username varchar(20) Foreign KEY references Super_User ON DELETE CASCADE ON UPDATE CASCADE ,
-	stadium_id int Foreign KEY references Stadium ON DELETE CASCADE ON UPDATE CASCADE
+    username varchar(20) Foreign KEY references Super_User ,
+	stadium_id int Foreign KEY references Stadium
 );
 
 CREATE TABLE Match(
 	id INT PRIMARY KEY IDENTITY,
 	starting_time date,
 	ending_time date,
-	host_club INT references Club ON DELETE CASCADE ON UPDATE CASCADE, 
-	guest_club INT references Club ON DELETE CASCADE ON UPDATE CASCADE,
-	stadium_id INT references Stadium ON DELETE CASCADE ON UPDATE CASCADE
+	host_club INT references Club, 
+	guest_club INT references Club,
+	stadium_id INT references Stadium 
 );
 
 CREATE TABLE Fan(
@@ -65,7 +65,7 @@ CREATE TABLE Fan(
 	address varchar(20),
 	phone_number varchar(20),
 	status bit,
-	username varchar(20) Foreign KEY references Super_User ON DELETE CASCADE ON UPDATE CASCADE
+	username varchar(20) Foreign KEY references Super_User 
 );
 
 
@@ -73,19 +73,19 @@ CREATE TABLE Fan(
 CREATE TABLE Ticket(
 	id int PRIMARY KEY IDENTITY,
 	status varchar(20),
-	match_id int references Match ON DELETE CASCADE ON UPDATE CASCADE
+	match_id int references Match
 );
 
 CREATE TABLE Ticket_Buying_Transactions(
-	fan_id VARCHAR(20) Foreign KEY references Fan ON DELETE CASCADE ON UPDATE CASCADE,
-	ticket_id int Foreign KEY references Ticket ON DELETE CASCADE ON UPDATE CASCADE
+	fan_id VARCHAR(20) Foreign KEY references Fan,
+	ticket_id int Foreign KEY references Ticket
 );
 
 CREATE TABLE Host_Request(
 	id int PRIMARY KEY IDENTITY,
-	representative_id int Foreign KEY references Representative ON DELETE CASCADE ON UPDATE CASCADE,
-	manager_id int Foreign KEY references Manager ON DELETE CASCADE ON UPDATE CASCADE,
-	match_id int Foreign KEY references Match ON DELETE CASCADE ON UPDATE CASCADE,
+	representative_id int Foreign KEY references Representative,
+	manager_id int Foreign KEY references Manager,
+	match_id int Foreign KEY references Match,
 	status bit default NULL
 );
 GO
@@ -113,7 +113,7 @@ EXEC dropAllTables;
 EXEC createAllTables;
 GO
 
--------------------------------HELPER_Functions---------------------------------------------------
+-------------------------------HELPER_Functions-------------------------------------------------
 CREATE FUNCTION getClubID (@name varchar(20))
 RETURNS INT
 BEGIN
@@ -224,6 +224,7 @@ WHERE match_id = @match_id AND status = 1
 RETURN @id
 END
 Go
+
 --------------------------------------------------------------------------------------------------
 
 Go
@@ -306,22 +307,35 @@ FROM Club c
 WHERE c.id NOT IN(select host_club from match) and c.id not in (select guest_club from match);
 GO
 
+create proc deleteMatchHelper @id int
+as
+delete from Ticket_Buying_Transactions where ticket_id in (select id from Ticket where match_id = @id);
+delete from Ticket where match_id = @id;
+delete from Host_Request where match_id = @id;
+delete from Match where id = @id;
+go
+
 CREATE PROC deleteMatch
 @host_club VARCHAR(20) , @guest_club VARCHAR(20)
 AS
-delete from Match
-where host_club = dbo.getClubID(@host_club) AND guest_club = dbo.getClubID(@guest_club)
+Declare @id int;
+Select top 1 @id = id from Match where dbo.getClubID(@host_club) = host_club and dbo.getClubID(@guest_club) = guest_club;
+exec deleteMatchHelper @id;
 GO
 
 
 CREATE PROC deleteMatchesOnStadium
 @stadium_name VARCHAR(20)
 As
+delete from Ticket_Buying_Transactions where ticket_id in (select id from Ticket where match_id in (select id from Match where stadium_id in (select id from Stadium where name = @stadium_name) and starting_time > CURRENT_TIMESTAMP));
+delete from Ticket where match_id in (select id from Match where stadium_id in (select id from Stadium where name = @stadium_name) and starting_time > CURRENT_TIMESTAMP);
+delete from Host_Request where match_id in (select id from Match where stadium_id in (select id from Stadium where name = @stadium_name) and starting_time > CURRENT_TIMESTAMP);
 delete from Match 
 where stadium_id in 
 (Select id from Stadium where
 name = @stadium_name) and starting_time > CURRENT_TIMESTAMP;
 GO
+
 
 CREATE PROC addClub
 @name VARCHAR(20) , @location VARCHAR(20)
@@ -336,12 +350,26 @@ AS
 INSERT INTO Ticket (match_id) VALUES (dbo.getMatchID(@host_club, @guest_club, @date_time));
 go
 
+
+create proc deleteClubHelper
+@id INT
+as
+delete from Ticket_Buying_Transactions where ticket_id in (select id from Ticket where match_id in (select id from Match where host_club = @id or guest_club = @id));
+delete from Ticket where match_id in (select id from Match where host_club = @id or guest_club = @id);
+delete from Host_Request where match_id in (select id from Match where host_club = @id or guest_club = @id);
+delete from Match where host_club = @id or guest_club = @id;
+delete from Representative where club_id = @id;
+delete from Club where id = @id;
+go
+
 CREATE PROC deleteClub
 @name VARCHAR(20)
 AS
-delete from CLub
-where club.name = @name;
+declare @id int;
+select top 1 @id = id from Club where @name = name;
+exec deleteClubHelper @id;
 GO
+
 
 CREATE PROC addStadium
 @name VARCHAR(20) , @location VARCHAR(20) , @capacity INT
@@ -663,3 +691,47 @@ END
 GO
 
 EXEC dropAllProceduresFunctionsViews
+
+--Create clubs using addclub procedure
+EXEC addClub 'Al Ahly', 'Cairo', 'Egypt'
+EXEC addClub 'Al Zamalek', 'Cairo', 'Egypt'
+EXEC addClub 'Al Masry', 'Alexandria', 'Egypt'
+EXEC addClub 'Al Ittihad', 'Alexandria', 'Egypt'
+
+--Create stadiums using addStadium procedure
+EXEC addStadium 'Cairo Stadium', 'Cairo', 10000
+EXEC addStadium 'Alexandria Stadium', 'Alexandria', 5000
+
+--Create managers using addStadiumManager procedure
+EXEC addStadiumManager 'Ahmed', 'Ahmed', 'Cairo Stadium'
+EXEC addStadiumManager 'Mohamed', 'Mohamed', 'Alexandria Stadium'
+
+--Create representatives using addRepresentative procedure
+EXEC addRepresentative 'Ahmed', 'Ahmed', 'Al Ahly'
+EXEC addRepresentative 'Mohamed', 'Mohamed', 'Al Zamalek'
+EXEC addRepresentative 'Ali', 'Ali', 'Al Masry'
+EXEC addRepresentative 'Khaled', 'Khaled', 'Al Ittihad'
+
+--Create matches using addMatch procedure
+EXEC addMatch 'Al Ahly', 'Al Zamalek', '2019-12-12 12:00:00'
+EXEC addMatch 'Al Ahly', 'Al Ittihad', '2019-12-12 12:00:00'
+EXEC addMatch 'Al Zamalek', 'Al Masry', '2019-12-12 12:00:00'
+EXEC addMatch 'Al Ittihad', 'Al Mas', '2019-12-12 12:00:00'
+
+--Create tickets using addTicket procedure
+EXEC addTicket 'Al Ahly', 'Al Zamalek', '2019-12-12 12:00:00' 
+EXEC addTicket 'Al Ahly', 'Al Ittihad', '2019-12-12 12:00:00'
+EXEC addTicket 'Al Zamalek', 'Al Masry', '2019-12-12 12:00:00'
+EXEC addTicket 'Al Ittihad', 'Al Mas', '2019-12-12 12:00:00'
+
+--Create host requests using addHostRequest procedure
+EXEC addHostRequest 'Al Ahly', 'Cairo Stadium', 'Al Ahly', 'Al Zamalek', '2019-12-12 12:00:00'
+EXEC addHostRequest 'Al Zamalek', 'Alexandria Stadium', 'Al Zamalek', 'Al Masry', '2019-12-12 12:00:00'
+EXEC addHostRequest 'Al Ittihad', 'Alexandria Stadium', 'Al Ittihad', 'Al Mas', '2019-12-12 12:00:00'
+
+--Create Association_Manager using addAssociationManager procedure
+EXEC addAssociationManager 'Ahmed', 'Ahmed', 'ahmedadmin'
+
+--Create Fans using addFan procedure
+EXEC addFan 'Ahmed', 'Ahmed', 'ahmedfan', '3650', '2019-12-12 12:00:00', '0100000000', 'Cairo'
+EXEC addFan 'Mohamed', 'Mohamed', 'mohamedfan', '3651', '2019-12-12 12:00:00', '0101200000', 'Alexandria'
