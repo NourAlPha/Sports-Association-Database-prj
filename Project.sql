@@ -377,11 +377,23 @@ AS
 INSERT INTO Stadium(name , location , capacity) values(@name , @location , @capacity);
 GO
 
+create proc deleteStadiumHelper
+@id INT
+as
+delete from Ticket_Buying_Transactions where ticket_id in (select id from Ticket where match_id in (select id from Match where stadium_id = @id));
+delete from Ticket where match_id in (select id from Match where stadium_id = @id);
+delete from Host_Request where match_id in (select id from Match where stadium_id = @id);
+delete from Match where stadium_id = @id;
+delete from Manager where stadium_id = @id;
+delete from Stadium where id = @id;
+go
+
 CREATE PROC deleteStadium
 @name VARCHAR(20)
 AS
-delete from Stadium
-where Stadium.name = @name;
+declare @id int;
+select top 1 @id = id from Stadium where id = @id;
+exec deleteStadiumHelper @id;
 GO
 
 CREATE PROC blockFan 
