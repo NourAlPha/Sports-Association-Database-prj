@@ -407,3 +407,5 @@ SportAssociation/SportAssociation/obj/Debug/net6.0/SportAssociation.assets.cache
 SportAssociation/SportAssociation/obj/Debug/net6.0/SportAssociation.csproj.AssemblyReference.cache
 SportAssociation/SportAssociation/obj/Debug/net6.0/SportAssociation.GeneratedMSBuildEditorConfig.editorconfig
 SportAssociation/SportAssociation/SportAssociation.csproj.user
+*.cache
+*.editorconfig
