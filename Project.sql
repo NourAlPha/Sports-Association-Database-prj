@@ -90,6 +90,7 @@ CREATE TABLE Host_Request(
 );
 GO
 
+
 CREATE PROCEDURE dropAllTables 
 AS
 DROP TABLE Host_Request;

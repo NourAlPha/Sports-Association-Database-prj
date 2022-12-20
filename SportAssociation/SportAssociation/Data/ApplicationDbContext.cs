@@ -11,5 +11,7 @@ namespace SportAssociation.Data
         {
         }
         public DbSet<SportAssociation.Models.Fan> Fan { get; set; }
+        public DbSet<SportAssociation.Models.Club> Club { get; set; }
+        public DbSet<SportAssociation.Models.Manager> Manager { get; set; }
     }
 }
