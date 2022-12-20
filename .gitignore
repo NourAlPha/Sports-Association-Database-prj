@@ -409,3 +409,5 @@ SportAssociation/SportAssociation/obj/Debug/net6.0/SportAssociation.GeneratedMSB
 SportAssociation/SportAssociation/SportAssociation.csproj.user
 *.cache
 *.editorconfig
+*.vsidx
+*.cs
