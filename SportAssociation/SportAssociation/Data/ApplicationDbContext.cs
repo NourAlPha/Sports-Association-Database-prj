@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using SportAssociation.Models;
 
 namespace SportAssociation.Data
 {
@@ -9,5 +10,6 @@ namespace SportAssociation.Data
             : base(options)
         {
         }
+        public DbSet<SportAssociation.Models.Fan> Fan { get; set; }
     }
 }

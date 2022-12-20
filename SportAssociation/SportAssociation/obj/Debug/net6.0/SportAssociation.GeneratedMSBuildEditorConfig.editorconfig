@@ -20,6 +20,26 @@ build_property._RazorSourceGeneratorDebug =
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcSWRlbnRpdHlcUGFnZXNcX1ZpZXdTdGFydC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
+[D:/prj/Database Project/SportAssociation/SportAssociation/Views/Fans/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRmFuc1xDcmVhdGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/prj/Database Project/SportAssociation/SportAssociation/Views/Fans/Delete.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRmFuc1xEZWxldGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/prj/Database Project/SportAssociation/SportAssociation/Views/Fans/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRmFuc1xEZXRhaWxzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/prj/Database Project/SportAssociation/SportAssociation/Views/Fans/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRmFuc1xFZGl0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/prj/Database Project/SportAssociation/SportAssociation/Views/Fans/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRmFuc1xJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
 [D:/prj/Database Project/SportAssociation/SportAssociation/Views/Home/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
