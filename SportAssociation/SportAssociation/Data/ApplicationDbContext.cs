@@ -11,5 +11,6 @@ namespace SportAssociation.Data
         {
         }
         public DbSet<SportAssociation.Models.Fan> Fan { get; set; }
+        public DbSet<SportAssociation.Models.HostRequest> HostRequest { get; set; }
     }
 }

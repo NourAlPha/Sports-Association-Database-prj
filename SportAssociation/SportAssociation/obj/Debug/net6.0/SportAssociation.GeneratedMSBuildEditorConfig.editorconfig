@@ -9,65 +9,85 @@ build_property.EnforceExtendedAnalyzerRules =
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = SportAssociation
 build_property.RootNamespace = SportAssociation
-build_property.ProjectDir = C:\Users\omaro\Desktop\DBProject\Database-Project\SportAssociation\SportAssociation\
+build_property.ProjectDir = D:\prj\Database Project\SportAssociation\SportAssociation\
 build_property.RazorLangVersion = 6.0
 build_property.SupportLocalizedComponentNames = 
 build_property.GenerateRazorMetadataSourceChecksumAttributes = 
-build_property.MSBuildProjectDirectory = C:\Users\omaro\Desktop\DBProject\Database-Project\SportAssociation\SportAssociation
+build_property.MSBuildProjectDirectory = D:\prj\Database Project\SportAssociation\SportAssociation
 build_property._RazorSourceGeneratorDebug = 
 
-[C:/Users/omaro/Desktop/DBProject/Database-Project/SportAssociation/SportAssociation/Areas/Identity/Pages/_ViewStart.cshtml]
+[D:/prj/Database Project/SportAssociation/SportAssociation/Areas/Identity/Pages/_ViewStart.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcSWRlbnRpdHlcUGFnZXNcX1ZpZXdTdGFydC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/omaro/Desktop/DBProject/Database-Project/SportAssociation/SportAssociation/Views/Fans/Create.cshtml]
+[D:/prj/Database Project/SportAssociation/SportAssociation/Views/Fans/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRmFuc1xDcmVhdGUuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/omaro/Desktop/DBProject/Database-Project/SportAssociation/SportAssociation/Views/Fans/Delete.cshtml]
+[D:/prj/Database Project/SportAssociation/SportAssociation/Views/Fans/Delete.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRmFuc1xEZWxldGUuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/omaro/Desktop/DBProject/Database-Project/SportAssociation/SportAssociation/Views/Fans/Details.cshtml]
+[D:/prj/Database Project/SportAssociation/SportAssociation/Views/Fans/Details.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRmFuc1xEZXRhaWxzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/omaro/Desktop/DBProject/Database-Project/SportAssociation/SportAssociation/Views/Fans/Edit.cshtml]
+[D:/prj/Database Project/SportAssociation/SportAssociation/Views/Fans/Edit.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRmFuc1xFZGl0LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/omaro/Desktop/DBProject/Database-Project/SportAssociation/SportAssociation/Views/Fans/Index.cshtml]
+[D:/prj/Database Project/SportAssociation/SportAssociation/Views/Fans/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRmFuc1xJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/omaro/Desktop/DBProject/Database-Project/SportAssociation/SportAssociation/Views/Home/Index.cshtml]
+[D:/prj/Database Project/SportAssociation/SportAssociation/Views/Home/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/omaro/Desktop/DBProject/Database-Project/SportAssociation/SportAssociation/Views/Home/Privacy.cshtml]
+[D:/prj/Database Project/SportAssociation/SportAssociation/Views/Home/Privacy.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxQcml2YWN5LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/omaro/Desktop/DBProject/Database-Project/SportAssociation/SportAssociation/Views/Shared/Error.cshtml]
+[D:/prj/Database Project/SportAssociation/SportAssociation/Views/HostRequests/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9zdFJlcXVlc3RzXENyZWF0ZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/prj/Database Project/SportAssociation/SportAssociation/Views/HostRequests/Delete.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9zdFJlcXVlc3RzXERlbGV0ZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/prj/Database Project/SportAssociation/SportAssociation/Views/HostRequests/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9zdFJlcXVlc3RzXERldGFpbHMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/prj/Database Project/SportAssociation/SportAssociation/Views/HostRequests/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9zdFJlcXVlc3RzXEVkaXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/prj/Database Project/SportAssociation/SportAssociation/Views/HostRequests/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9zdFJlcXVlc3RzXEluZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/prj/Database Project/SportAssociation/SportAssociation/Views/Shared/Error.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXEVycm9yLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/omaro/Desktop/DBProject/Database-Project/SportAssociation/SportAssociation/Views/Shared/_LoginPartial.cshtml]
+[D:/prj/Database Project/SportAssociation/SportAssociation/Views/Shared/_LoginPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9Mb2dpblBhcnRpYWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/omaro/Desktop/DBProject/Database-Project/SportAssociation/SportAssociation/Views/Shared/_ValidationScriptsPartial.cshtml]
+[D:/prj/Database Project/SportAssociation/SportAssociation/Views/Shared/_ValidationScriptsPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/omaro/Desktop/DBProject/Database-Project/SportAssociation/SportAssociation/Views/_ViewImports.cshtml]
+[D:/prj/Database Project/SportAssociation/SportAssociation/Views/_ViewImports.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/omaro/Desktop/DBProject/Database-Project/SportAssociation/SportAssociation/Views/_ViewStart.cshtml]
+[D:/prj/Database Project/SportAssociation/SportAssociation/Views/_ViewStart.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdTdGFydC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/omaro/Desktop/DBProject/Database-Project/SportAssociation/SportAssociation/Views/Shared/_Layout.cshtml]
+[D:/prj/Database Project/SportAssociation/SportAssociation/Views/Shared/_Layout.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MYXlvdXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = b-nr5w8qzli9
