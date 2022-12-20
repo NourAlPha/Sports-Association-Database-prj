@@ -1,4 +1,4 @@
-CREATE DATABASE Project;
+CREATE DATABASE Proj;
 
 GO
 CREATE PROC createAllTables
