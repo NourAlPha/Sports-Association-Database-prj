@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "D:\\prj\\Database Project\\SportAssociation\\SportAssociation\\SportAssociation.csproj": {}
+    "C:\\Users\\omaro\\Desktop\\DBProject\\Database-Project\\SportAssociation\\SportAssociation\\SportAssociation.csproj": {}
   },
   "projects": {
-    "D:\\prj\\Database Project\\SportAssociation\\SportAssociation\\SportAssociation.csproj": {
+    "C:\\Users\\omaro\\Desktop\\DBProject\\Database-Project\\SportAssociation\\SportAssociation\\SportAssociation.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\prj\\Database Project\\SportAssociation\\SportAssociation\\SportAssociation.csproj",
+        "projectUniqueName": "C:\\Users\\omaro\\Desktop\\DBProject\\Database-Project\\SportAssociation\\SportAssociation\\SportAssociation.csproj",
         "projectName": "SportAssociation",
-        "projectPath": "D:\\prj\\Database Project\\SportAssociation\\SportAssociation\\SportAssociation.csproj",
-        "packagesPath": "C:\\Users\\noura\\.nuget\\packages\\",
-        "outputPath": "D:\\prj\\Database Project\\SportAssociation\\SportAssociation\\obj\\",
+        "projectPath": "C:\\Users\\omaro\\Desktop\\DBProject\\Database-Project\\SportAssociation\\SportAssociation\\SportAssociation.csproj",
+        "packagesPath": "C:\\Users\\omaro\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\omaro\\Desktop\\DBProject\\Database-Project\\SportAssociation\\SportAssociation\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\noura\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\omaro\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -86,7 +86,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.101\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.100\\RuntimeIdentifierGraph.json"
         }
       }
     }
