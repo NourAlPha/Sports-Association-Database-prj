@@ -481,7 +481,9 @@ CREATE PROC checkExists
 @checkcredentials bit OUTPUT
 AS
 if(EXISTS(SELECT * FROM Super_User WHERE username = @username and password = @password))
-SET @checkcredentials  = 1;
+SET @checkcredentials = 1;
+else
+SET @checkcredentials = 0;
 GO
 
 CREATE PROC checkRole 
@@ -493,7 +495,7 @@ DECLARE @table_name VARCHAR(20);
 DECLARE @checkExist bit;
 EXEC checkExists @username, @password, @checkExist OUTPUT
 if(@checkExist = '0') 
-SET @out = 'NULL';
+SET @out = 'Balabizo';
 else
 begin
 SET @table_name = 'Association_Manager';
@@ -510,6 +512,7 @@ if(EXISTS(SELECT * FROM Representative WHERE username = @username))
 SET @out  = @table_name;
 end
 GO
+
 
 CREATE PROC acceptRequest
 @managerUserName VARCHAR(20),
