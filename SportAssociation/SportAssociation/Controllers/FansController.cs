@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing.Printing;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -34,7 +37,7 @@ namespace SportAssociation.Controllers
             }
 
             var fan = await _context.Fan
-                .FirstOrDefaultAsync(m => m.NationalId == id);
+                .FirstOrDefaultAsync(m => m.national_id == id);
             if (fan == null)
             {
                 return NotFound();
@@ -54,15 +57,18 @@ namespace SportAssociation.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("NationalId,Name,BirthDate,Address,PhoneNumber,Status")] Fan fan)
+        public async Task<IActionResult> Create([Bind("national_id,Name,birth_date,Address,phone_number,Username")] Fan fan, String Password)
         {
-            if (ModelState.IsValid)
-            {
-                _context.Add(fan);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(fan);
+            var nameSQLParam = new Microsoft.Data.SqlClient.SqlParameter("@name", fan.Name);
+            var usernameSQLParam = new Microsoft.Data.SqlClient.SqlParameter("@username", fan.Username);
+            var passwordSQLParam = new Microsoft.Data.SqlClient.SqlParameter("@password", Password);
+            var nationalidSQLParam = new Microsoft.Data.SqlClient.SqlParameter("@national_id", fan.national_id);
+            var phonenumberSQLParam = new Microsoft.Data.SqlClient.SqlParameter("@phone_num", fan.phone_number);
+            var birthdateSQLParam = new Microsoft.Data.SqlClient.SqlParameter("@birth_date", fan.birth_date);
+            var addressSQLParam = new Microsoft.Data.SqlClient.SqlParameter("@address", fan.Address);
+            _context.Database.ExecuteSqlRaw("exec dbo.addFan @name={0}, @username={1}, @password={2}, @national_id={3}, @birth_date={4}, @address={5}, @phone_num={6}",
+                nameSQLParam, usernameSQLParam, passwordSQLParam, nationalidSQLParam, birthdateSQLParam, addressSQLParam, phonenumberSQLParam);
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Fans/Edit/5
@@ -86,9 +92,9 @@ namespace SportAssociation.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("NationalId,Name,BirthDate,Address,PhoneNumber,Status")] Fan fan)
+        public async Task<IActionResult> Edit(string id, [Bind("national_id,Name,birth_date,Address,phone_number,Status,Username")] Fan fan)
         {
-            if (id != fan.NationalId)
+            if (id != fan.national_id)
             {
                 return NotFound();
             }
@@ -102,7 +108,7 @@ namespace SportAssociation.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!FanExists(fan.NationalId))
+                    if (!FanExists(fan.national_id))
                     {
                         return NotFound();
                     }
@@ -125,7 +131,7 @@ namespace SportAssociation.Controllers
             }
 
             var fan = await _context.Fan
-                .FirstOrDefaultAsync(m => m.NationalId == id);
+                .FirstOrDefaultAsync(m => m.national_id == id);
             if (fan == null)
             {
                 return NotFound();
@@ -155,7 +161,7 @@ namespace SportAssociation.Controllers
 
         private bool FanExists(string id)
         {
-          return _context.Fan.Any(e => e.NationalId == id);
+          return _context.Fan.Any(e => e.national_id == id);
         }
     }
 }

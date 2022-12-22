@@ -20,6 +20,7 @@ namespace SportAssociation.Controllers
         }
 
         // GET: Clubs
+
         public async Task<IActionResult> Index()
         {
               return View(await _context.Club.ToListAsync());

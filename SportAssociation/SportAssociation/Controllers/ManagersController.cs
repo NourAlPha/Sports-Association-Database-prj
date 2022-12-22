@@ -54,15 +54,15 @@ namespace SportAssociation.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("id,name,username,stadium_id")] Manager manager)
+        public async Task<IActionResult> Create([Bind("name,username")] Manager manager, String StadiumName, String Password)
         {
-            if (ModelState.IsValid)
-            {
-                _context.Add(manager);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(manager);
+            var nameSQLParam = new Microsoft.Data.SqlClient.SqlParameter("@name", manager.name);
+            var usernameSQLParam = new Microsoft.Data.SqlClient.SqlParameter("@username", manager.username);
+            var passwordSQLParam = new Microsoft.Data.SqlClient.SqlParameter("@password", Password);
+            var stadiumnameSQLParam = new Microsoft.Data.SqlClient.SqlParameter("@stadium_name", StadiumName);
+            _context.Database.ExecuteSqlRaw("exec dbo.addStadiumManager @name={0}, @stadium_name={1}, @username={2}, @password={3}",
+                nameSQLParam, stadiumnameSQLParam, usernameSQLParam, passwordSQLParam);
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Managers/Edit/5

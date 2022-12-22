@@ -18,10 +18,10 @@
             @Html.DisplayFor(model => model.Name)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.BirthDate)
+            @Html.DisplayNameFor(model => model.birth_date)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.BirthDate)
+            @Html.DisplayFor(model => model.birth_date)
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.Address)
@@ -30,10 +30,10 @@
             @Html.DisplayFor(model => model.Address)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.PhoneNumber)
+            @Html.DisplayNameFor(model => model.phone_number)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.PhoneNumber)
+            @Html.DisplayFor(model => model.phone_number)
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.Status)
@@ -41,10 +41,16 @@
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.Status)
         </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Username)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Username)
+        </dd>
     </dl>
     
     <form asp-action="Delete">
-        <input type="hidden" asp-for="NationalId" />
+        <input type="hidden" asp-for="national_id" />
         <input type="submit" value="Delete" class="btn btn-danger" /> |
         <a asp-action="Index">Back to List</a>
     </form>

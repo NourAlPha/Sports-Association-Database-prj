@@ -475,6 +475,42 @@ WHERE H.representative_id = R.id AND H.manager_id = dbo.getManagerID2(@username)
 ) 
 GO
 
+CREATE PROC checkExists
+@username VARCHAR(20),
+@password VARCHAR(20),
+@checkcredentials bit OUTPUT
+AS
+if(EXISTS(SELECT * FROM Super_User WHERE username = @username and password = @password))
+SET @checkcredentials  = 1;
+GO
+
+CREATE PROC checkRole 
+@username VARCHAR(20),
+@password VARCHAR(20),
+@out VARCHAR(20) OUTPUT 
+AS
+DECLARE @table_name VARCHAR(20);
+DECLARE @checkExist bit;
+EXEC checkExists @username, @password, @checkExist OUTPUT
+if(@checkExist = '0') 
+SET @out = 'NULL';
+else
+begin
+SET @table_name = 'Association_Manager';
+if(EXISTS(SELECT * FROM Association_Manager WHERE username = @username))
+SET @out  = @table_name;
+SET @table_name = 'Fan';
+if(EXISTS(SELECT * FROM Fan WHERE username = @username))
+SET @out  = @table_name;
+SET @table_name = 'Manager';
+if(EXISTS(SELECT * FROM Manager WHERE username = @username))
+SET @out  = @table_name;
+SET @table_name = 'Representative';
+if(EXISTS(SELECT * FROM Representative WHERE username = @username))
+SET @out  = @table_name;
+end
+GO
+
 CREATE PROC acceptRequest
 @managerUserName VARCHAR(20),
 @hostClub VARCHAR(20),
@@ -499,6 +535,7 @@ update host_request
 set status = 0
 where manager_id = dbo.getManagerID2(@managerUserName) and representative_ID = dbo.getRepresentativeID(@hostClub) and match_ID = dbo.getMatchID(@hostClub, @guestClub, @startTime)
 GO
+
 
 CREATE PROC addFan 
 @name VARCHAR(20),

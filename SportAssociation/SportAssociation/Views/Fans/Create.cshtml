@@ -4,7 +4,7 @@
     ViewData["Title"] = "Create";
 }
 
-<h1>Create</h1>
+<h1>Register</h1>
 
 <h4>Fan</h4>
 <hr />
@@ -13,9 +13,9 @@
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="NationalId" class="control-label"></label>
-                <input asp-for="NationalId" class="form-control" />
-                <span asp-validation-for="NationalId" class="text-danger"></span>
+                <label asp-for="national_id" class="control-label"></label>
+                <input asp-for="national_id" class="form-control" />
+                <span asp-validation-for="national_id" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>
@@ -23,9 +23,9 @@
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="BirthDate" class="control-label"></label>
-                <input asp-for="BirthDate" class="form-control" />
-                <span asp-validation-for="BirthDate" class="text-danger"></span>
+                <label asp-for="birth_date" class="control-label"></label>
+                <input asp-for="birth_date" class="form-control" />
+                <span asp-validation-for="birth_date" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Address" class="control-label"></label>
@@ -33,17 +33,21 @@
                 <span asp-validation-for="Address" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="PhoneNumber" class="control-label"></label>
-                <input asp-for="PhoneNumber" class="form-control" />
-                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
-            </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="Status" /> @Html.DisplayNameFor(model => model.Status)
-                </label>
+                <label asp-for="phone_number" class="control-label"></label>
+                <input asp-for="phone_number" class="form-control" />
+                <span asp-validation-for="phone_number" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <label asp-for="Username" class="control-label"></label>
+                <input asp-for="Username" class="form-control" />
+                <span asp-validation-for="Username" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label for="Password" class="control-label">Password</label>
+                <input name="Password" class="form-control" />
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Register" class="btn btn-primary" />
             </div>
         </form>
     </div>
