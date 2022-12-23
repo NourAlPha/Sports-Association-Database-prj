@@ -369,6 +369,25 @@ select top 1 @id = id from Club where @name = name;
 exec deleteClubHelper @id;
 GO
 
+CREATE FUNCTION upcomingMatches()
+RETURNS @res Table(Host_Club VARCHAR(20), Guest_Club VARCHAR(20), start datetime, endingTime datetime)
+AS
+BEGIN
+declare @temp Table(id int, startTime datetime, endingTime datetime, hostClub int, guestClub int, stadiumId int)
+INSERT INTO @temp(id, startTime, endingTime, hostClub, guestClub, stadiumID) 
+SELECT * FROM Match 
+WHERE starting_time > current_TimeStamp
+INSERT INTO @res(Host_Club, Guest_Club, start, endingTime)
+SELECT dbo.getClubName(hostClub), dbo.getClubName(guestClub), startTime, endingTime
+FROM @temp
+return
+END
+GO
+
+declare @tabble table(Host_Club VARCHAR(20), Guest_Club VARCHAR(20), start datetime, endingTime datetime);
+insert into @tabble(Host_Club, Guest_Club, start, endingTime) select * from dbo.upcomingMatches();
+select * from @tabble;
+
 CREATE PROC addStadium
 @name VARCHAR(20) , @location VARCHAR(20) , @capacity INT
 AS

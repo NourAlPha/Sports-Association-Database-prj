@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using SportAssociation.Data;
 using SportAssociation.Models;
@@ -156,8 +157,21 @@ namespace SportAssociation.Controllers
 
         public async Task<IActionResult> ViewAllUpcomingMatches()
         {
-            
-            
+            string connectionstring = "Server=(localdb)\\mssqllocaldb;Database=Proj;Trusted_Connection=True;MultipleActiveResultSets=true";
+
+            var result = new object();
+
+            using (SqlConnection conn = new SqlConnection(connectionstring))
+            {
+                conn.Open();
+                SqlCommand cmd = new SqlCommand("Select dbo.getClubName(host_club), dbo.getClubName(guest_club), starting_time, ending_time from Match where starting_time > current_timestamp", conn);
+                result = cmd.ExecuteScalar();
+                conn.Close();
+            }
+
+
+            return RedirectToAction(nameof(Index));
+
         }
 
         private bool Association_ManagerExists(int id)
