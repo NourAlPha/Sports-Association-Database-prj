@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -160,17 +161,20 @@ namespace SportAssociation.Controllers
             string connectionstring = "Server=(localdb)\\mssqllocaldb;Database=Proj;Trusted_Connection=True;MultipleActiveResultSets=true";
 
             var result = new object();
+            DataTable dataTable = new DataTable();
 
             using (SqlConnection conn = new SqlConnection(connectionstring))
             {
                 conn.Open();
-                SqlCommand cmd = new SqlCommand("Select dbo.getClubName(host_club), dbo.getClubName(guest_club), starting_time, ending_time from Match where starting_time > current_timestamp", conn);
-                result = cmd.ExecuteScalar();
+                SqlCommand cmd = new SqlCommand("Select dbo.getClubName(host_club) as Host_Club, dbo.getClubName(guest_club) as Guest_Club, starting_time, ending_time from Match where starting_time > current_timestamp", conn);
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                // this will query your database and return the result to your datatable
+                da.Fill(dataTable);
                 conn.Close();
+                da.Dispose();
             }
 
-
-            return RedirectToAction(nameof(Index));
+            return View(dataTable);
 
         }
 
