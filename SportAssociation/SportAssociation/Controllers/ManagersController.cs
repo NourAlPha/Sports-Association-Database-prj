@@ -62,6 +62,8 @@ namespace SportAssociation.Controllers
             var stadiumnameSQLParam = new Microsoft.Data.SqlClient.SqlParameter("@stadium_name", StadiumName);
             _context.Database.ExecuteSqlRaw("exec dbo.addStadiumManager @name={0}, @stadium_name={1}, @username={2}, @password={3}",
                 nameSQLParam, stadiumnameSQLParam, usernameSQLParam, passwordSQLParam);
+            Authentication.isAuthenticated = true;
+            Authentication.username = manager.username;
             return RedirectToAction(nameof(Index));
         }
 

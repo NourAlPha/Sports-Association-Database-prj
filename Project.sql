@@ -510,6 +510,9 @@ SET @out  = @table_name;
 SET @table_name = 'Representative';
 if(EXISTS(SELECT * FROM Representative WHERE username = @username))
 SET @out  = @table_name;
+SET @table_name = 'System_Admin';
+if(EXISTS(SELECT * FROM System_Admin WHERE username = @username))
+SET @out  = @table_name;
 end
 GO
 

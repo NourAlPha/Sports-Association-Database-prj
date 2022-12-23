@@ -1,0 +1,48 @@
+﻿@model SportAssociation.Models.Match
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Match</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.starting_time)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.starting_time)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.ending_time)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.ending_time)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.host_club)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.host_club)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.guest_club)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.guest_club)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.stadium_id)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.stadium_id)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>

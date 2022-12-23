@@ -68,6 +68,8 @@ namespace SportAssociation.Controllers
             var addressSQLParam = new Microsoft.Data.SqlClient.SqlParameter("@address", fan.Address);
             _context.Database.ExecuteSqlRaw("exec dbo.addFan @name={0}, @username={1}, @password={2}, @national_id={3}, @birth_date={4}, @address={5}, @phone_num={6}",
                 nameSQLParam, usernameSQLParam, passwordSQLParam, nationalidSQLParam, birthdateSQLParam, addressSQLParam, phonenumberSQLParam);
+            Authentication.isAuthenticated = true;
+            Authentication.username= fan.Username;
             return RedirectToAction(nameof(Index));
         }
 

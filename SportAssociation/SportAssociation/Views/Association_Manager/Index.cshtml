@@ -4,38 +4,24 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h1>Welcome Sports Association Manager</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Username)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Username)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+<div class="row">
+    <div class="col-md-4">
+        <br></br>
+        <a href="/matches"
+            <button class="w-100 btn btn-lg btn-primary">Manage Match</button>
+        </a>
+        <br></br>
+        <button class="w-100 btn btn-lg btn-primary" onclick="location.href='@Url.Action("ViewAllUpcomingMatches", "Association_Manager")'">View All upcoming matches</button>
+        <hr>
+        <a href="/clubs"
+            <button class="w-100 btn btn-lg btn-primary">View already played matches</button>
+        </a>
+        <hr>
+        <a href="/clubs"
+            <button class="w-100 btn btn-lg btn-primary">View pair of club names who never scheduled to play with each other</button>
+        </a>
+
+    </div>
+</div>

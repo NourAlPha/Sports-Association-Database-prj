@@ -21,5 +21,6 @@ namespace SportAssociation.Data
         public DbSet<SportAssociation.Models.System_Admin> System_Admin { get; set; }
         public DbSet<SportAssociation.Models.Ticket> Ticket { get; set; }
         public DbSet<SportAssociation.Models.Ticket_Buying_Transactions> Ticket_Buying_Transactions { get; set; }
+        public DbSet<SportAssociation.Models.Match> Match { get; set; }
     }
 }
