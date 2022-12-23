@@ -196,8 +196,16 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQXNzb2NpYXRpb25fTWFuYWdlclxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
+[D:/prj/Database Project/SportAssociation/SportAssociation/Views/Association_Manager/neverMatched.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQXNzb2NpYXRpb25fTWFuYWdlclxuZXZlck1hdGNoZWQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
 [D:/prj/Database Project/SportAssociation/SportAssociation/Views/Association_Manager/ViewAllUpcomingMatches.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQXNzb2NpYXRpb25fTWFuYWdlclxWaWV3QWxsVXBjb21pbmdNYXRjaGVzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/prj/Database Project/SportAssociation/SportAssociation/Views/Association_Manager/ViewAlreadyPlayedMatches.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQXNzb2NpYXRpb25fTWFuYWdlclxWaWV3QWxyZWFkeVBsYXllZE1hdGNoZXMuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
 [D:/prj/Database Project/SportAssociation/SportAssociation/Views/Clubs/Create.cshtml]

@@ -177,6 +177,49 @@ namespace SportAssociation.Controllers
             return View(dataTable);
 
         }
+        public async Task<IActionResult> ViewAlreadyPlayedMatches()
+        {
+            string connectionstring = "Server=(localdb)\\mssqllocaldb;Database=Proj;Trusted_Connection=True;MultipleActiveResultSets=true";
+
+            var result = new object();
+            DataTable dataTable = new DataTable();
+
+            using (SqlConnection conn = new SqlConnection(connectionstring))
+            {
+                conn.Open();
+                SqlCommand cmd = new SqlCommand("Select dbo.getClubName(host_club) as Host_Club, dbo.getClubName(guest_club) as Guest_Club, starting_time, ending_time from Match where starting_time < current_timestamp", conn);
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                // this will query your database and return the result to your datatable
+                da.Fill(dataTable);
+                conn.Close();
+                da.Dispose();
+            }
+
+            return View(dataTable);
+
+        }
+
+        public async Task<IActionResult> neverMatched()
+        {
+            string connectionstring = "Server=(localdb)\\mssqllocaldb;Database=Proj;Trusted_Connection=True;MultipleActiveResultSets=true";
+
+            var result = new object();
+            DataTable dataTable = new DataTable();
+
+            using (SqlConnection conn = new SqlConnection(connectionstring))
+            {
+                conn.Open();
+                SqlCommand cmd = new SqlCommand("Select * from dbo.clubsNeverMatched", conn);
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                // this will query your database and return the result to your datatable
+                da.Fill(dataTable);
+                conn.Close();
+                da.Dispose();
+            }
+
+            return View(dataTable);
+
+        }
 
         private bool Association_ManagerExists(int id)
         {
