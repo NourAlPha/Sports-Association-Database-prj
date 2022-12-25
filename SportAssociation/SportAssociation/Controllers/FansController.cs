@@ -121,7 +121,7 @@ namespace SportAssociation.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(ManageFan));
             }
             return View(fan);
         }
@@ -160,7 +160,7 @@ namespace SportAssociation.Controllers
             }
             
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(ManageFan));
         }
 
         public async Task<IActionResult> viewAvailableMatches()
@@ -197,6 +197,11 @@ namespace SportAssociation.Controllers
         {
             _context.Database.ExecuteSqlRaw("exec dbo.buyTicket @host_club='" + HostClub + "', @guest_club='" + GuestClub + "', @username='" + Authentication.username + "';");
             return View(nameof(Index));
+        }
+
+        public async Task<IActionResult> ManageFan()
+        {
+            return View(await _context.Fan.ToListAsync());
         }
 
         private bool FanExists(string id)
