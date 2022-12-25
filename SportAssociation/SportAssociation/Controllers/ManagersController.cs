@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using SportAssociation.Data;
 using SportAssociation.Models;
@@ -153,6 +155,28 @@ namespace SportAssociation.Controllers
             
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+
+        public async Task<IActionResult> viewStadiumInformation()
+        {
+            string connectionstring = "Server=(localdb)\\mssqllocaldb;Database=Proj;Trusted_Connection=True;MultipleActiveResultSets=true";
+
+            var result = new object();
+            DataTable dataTable = new DataTable();
+
+            using (SqlConnection conn = new SqlConnection(connectionstring))
+            {
+                conn.Open();
+                SqlCommand cmd = new SqlCommand("select s.name, s.capacity, s.location, s.status from Stadium s, Manager m where m.stadium_id = s.id and m.username='" + Authentication.username + "';", conn);
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                // this will query your database and return the result to your datatable
+                da.Fill(dataTable);
+                conn.Close();
+                da.Dispose();
+            }
+
+            return View(dataTable);
+
         }
 
         private bool ManagerExists(int id)

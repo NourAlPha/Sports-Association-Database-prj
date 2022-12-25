@@ -14,6 +14,7 @@ namespace SportAssociation.Controllers
     {
         private readonly ApplicationDbContext _context;
 
+
         public ClubsController(ApplicationDbContext context)
         {
             _context = context;
@@ -140,17 +141,7 @@ namespace SportAssociation.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.Club == null)
-            {
-                return Problem("Entity set 'ApplicationDbContext.Club'  is null.");
-            }
-            var club = await _context.Club.FindAsync(id);
-            if (club != null)
-            {
-                _context.Club.Remove(club);
-            }
-            
-            await _context.SaveChangesAsync();
+            _context.Database.ExecuteSqlRaw("exec dbo.deleteClubHelper '" + id + "';");
             return RedirectToAction(nameof(Index));
         }
 

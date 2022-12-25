@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Drawing.Printing;
 using System.Linq;
 using System.Net;
@@ -7,6 +8,7 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using SportAssociation.Data;
 using SportAssociation.Models;
@@ -159,6 +161,42 @@ namespace SportAssociation.Controllers
             
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+
+        public async Task<IActionResult> viewAvailableMatches()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> viewAvailableMatches(DateTime date)
+        {
+            string connectionstring = "Server=(localdb)\\mssqllocaldb;Database=Proj;Trusted_Connection=True;MultipleActiveResultSets=true";
+
+            var result = new object();
+            DataTable dataTable = new DataTable();
+
+            using (SqlConnection conn = new SqlConnection(connectionstring))
+            {
+                conn.Open();
+                string str = "select * from dbo.availableMatchesToAttend('" + date + "');";
+                SqlCommand cmd = new SqlCommand(str, conn);
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                // this will query your database and return the result to your datatable
+                da.Fill(dataTable);
+                conn.Close();
+                da.Dispose();
+            }
+
+            ViewBag.date = date;
+
+            return View("viewAvailableMatchesList", dataTable);
+        }
+
+        public async Task<IActionResult> PurchaseTicket(String HostClub, String GuestClub)
+        {
+            _context.Database.ExecuteSqlRaw("exec dbo.buyTicket @host_club='" + HostClub + "', @guest_club='" + GuestClub + "', @username='" + Authentication.username + "';");
+            return View(nameof(Index));
         }
 
         private bool FanExists(string id)

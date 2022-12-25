@@ -22,7 +22,7 @@ namespace SportAssociation.Controllers
         // GET: Matches
         public async Task<IActionResult> Index()
         {
-              return View(await _context.Match.ToListAsync());
+            return View(await _context.Match.ToListAsync());
         }
 
         // GET: Matches/Details/5
@@ -139,17 +139,7 @@ namespace SportAssociation.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.Match == null)
-            {
-                return Problem("Entity set 'ApplicationDbContext.Match'  is null.");
-            }
-            var match = await _context.Match.FindAsync(id);
-            if (match != null)
-            {
-                _context.Match.Remove(match);
-            }
-            
-            await _context.SaveChangesAsync();
+            _context.Database.ExecuteSqlRaw("exec dbo.deleteMatchHelper '" + id + "';");
             return RedirectToAction(nameof(Index));
         }
 

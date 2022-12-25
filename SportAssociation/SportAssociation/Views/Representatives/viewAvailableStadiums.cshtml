@@ -1,0 +1,15 @@
+﻿@model SportAssociation.Models.Match
+
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="viewAvailableStadiums">
+            <div class="form-group">
+                <label for="date" class="control-label">Date</label>
+                <input name="date" asp-for="starting_time" class="form-control" />
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Get" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,29 @@
+﻿@model System.Data.DataTable
+@using System.Data;
+
+<h4>Available Stadiums on @ViewBag.date</h4>
+
+<table class="table">
+    <thead>
+        <tr>
+            @foreach (DataColumn col in Model.Columns)
+            {
+                <th>@col.ColumnName</th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (DataRow row in Model.Rows)
+        {
+            <tr>
+                @foreach (DataColumn col in Model.Columns)
+                {
+                    <td>@row[col.ColumnName]</td>
+                }
+                <td>
+                <button class="w-20 btn btn-primary" onclick="location.href='@Url.Action("RequestHost", "Representatives", new {StadiumName = row[Model.Columns[0].ColumnName], date = @ViewBag.date})'">Request Host</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

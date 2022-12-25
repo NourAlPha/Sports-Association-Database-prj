@@ -139,17 +139,7 @@ namespace SportAssociation.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.Stadium == null)
-            {
-                return Problem("Entity set 'ApplicationDbContext.Stadium'  is null.");
-            }
-            var stadium = await _context.Stadium.FindAsync(id);
-            if (stadium != null)
-            {
-                _context.Stadium.Remove(stadium);
-            }
-            
-            await _context.SaveChangesAsync();
+            _context.Database.ExecuteSqlRaw("exec dbo.deleteStadiumHelper '" + id + "';");
             return RedirectToAction(nameof(Index));
         }
 

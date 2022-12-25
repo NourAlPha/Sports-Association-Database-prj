@@ -51,8 +51,8 @@ create table Manager(
 
 CREATE TABLE Match(
 	id INT PRIMARY KEY IDENTITY,
-	starting_time date,
-	ending_time date,
+	starting_time datetime,
+	ending_time datetime,
 	host_club INT references Club, 
 	guest_club INT references Club,
 	stadium_id INT references Stadium 
@@ -72,7 +72,7 @@ CREATE TABLE Fan(
 
 CREATE TABLE Ticket(
 	id int PRIMARY KEY IDENTITY,
-	status varchar(20),
+	status bit,
 	match_id int references Match
 );
 
@@ -90,7 +90,6 @@ CREATE TABLE Host_Request(
 );
 GO
 
-
 CREATE PROCEDURE dropAllTables 
 AS
 DROP TABLE Host_Request;
@@ -106,7 +105,6 @@ DROP TABLE Manager;
 DROP TABLE Super_User;
 DROP TABLE Stadium;
 GO
-
 
 CREATE PROC clearAllTables
 AS
@@ -126,7 +124,19 @@ RETURN @ret
 END
 GO
 
+select * from Match
+select * from Club
+select * from dbo.upcomingMatchesOfClub(dbo.getClubNameUsername('lapo'))
+select * from dbo.viewAvailableStadiumsOn('4/4/2023 10:00:00 PM');
+select * from Host_request
+select * from Manager
+select * from Stadium
+select * from Association_Manager
+select * from Super_User
+select * from Ticket
+select * from Ticket_Buying_Transactions
 
+go
 CREATE FUNCTION getMatchID(@hname varchar(20) , @gname varchar(20), @date datetime) 
 RETURNS INT
 BEGIN
@@ -191,6 +201,15 @@ FROM Manager
 WHERE username = @username
 RETURN @id
 END
+GO
+
+CREATE proc getManagerID3
+@username VARCHAR(20),
+@out int output
+as
+SELECT @out = id
+FROM Manager 
+WHERE username = @username
 GO
 
 CREATE FUNCTION getClubName(@id int)
@@ -361,6 +380,7 @@ delete from Representative where club_id = @id;
 delete from Club where id = @id;
 go
 
+
 CREATE PROC deleteClub
 @name VARCHAR(20)
 AS
@@ -383,6 +403,13 @@ FROM @temp
 return
 END
 GO
+
+create proc getCapacity
+@manager_id int,
+@out int output
+as
+select @out = s.capacity from Stadium s, Manager m where m.stadium_id = s.id and m.id = @manager_id;
+go
 
 CREATE PROC addStadium
 @name VARCHAR(20) , @location VARCHAR(20) , @capacity INT
@@ -441,18 +468,30 @@ RETURN
 (
 SELECT s.name, s.location, s.capacity
 FROM Stadium s
-WHERE s.id NOT IN
+WHERE s.status = '1' and s.id NOT IN
 (SELECT m.stadium_id
 FROM Match m
-WHERE m.starting_time = @date)
+WHERE m.starting_time = @date and m.stadium_id is not null)
 )
 GO
+
 
 CREATE PROC addHostRequest
 @club_name VARCHAR(20),
 @stadium_name VARCHAR(20),
 @date_time datetime
 AS
+INSERT INTO Host_Request VALUES(dbo.getRepresentativeID(@club_name), dbo.getManagerID(@stadium_name), dbo.getMatchID1(@club_name, @date_time), NULL)
+
+go
+
+CREATE PROC addHostRequestUsername
+@username VARCHAR(20),
+@stadium_name VARCHAR(20),
+@date_time datetime
+AS
+declare @club_name varchar(20);
+set @club_name = dbo.getClubNameUsername(@username);
 INSERT INTO Host_Request VALUES(dbo.getRepresentativeID(@club_name), dbo.getManagerID(@stadium_name), dbo.getMatchID1(@club_name, @date_time), NULL)
 GO
 
@@ -573,7 +612,7 @@ GO
 
 
 CREATE FUNCTION upcomingMatchesOfClub(@clubName VARCHAR(20))
-RETURNS @res Table(Host_Club VARCHAR(20), Guest_Club VARCHAR(20), start datetime, Stadium VARCHAR(20))
+RETURNS @res Table(Host_Club VARCHAR(20), Guest_Club VARCHAR(20), start datetime, endingtime datetime, Stadium VARCHAR(20))
 AS
 BEGIN
 declare @inputClubID int = dbo.getClubID(@clubName)
@@ -581,12 +620,26 @@ declare @temp Table(id int, startTime datetime, endingTime datetime, hostClub in
 INSERT INTO @temp(id, startTime, endingTime, hostClub, guestClub, stadiumID) 
 SELECT * FROM Match 
 WHERE starting_time > current_TimeStamp AND (host_club = @inputClubID OR guest_club = @inputClubID)
-INSERT INTO @res(Host_Club, Guest_Club, start, Stadium)
-SELECT dbo.getClubName(hostClub), dbo.getClubName(guestClub), startTime, dbo.getStadiumName(stadiumID)
+INSERT INTO @res(Host_Club, Guest_Club, start, endingtime, Stadium)
+SELECT dbo.getClubName(hostClub), dbo.getClubName(guestClub), startTime, endingTime, dbo.getStadiumName(stadiumID)
 FROM @temp
 return
 END
 GO
+
+go
+go
+
+create function getClubNameUsername(@username varchar(20))
+returns varchar(20)
+as
+begin
+declare @ret varchar(20);
+select @ret = c.name from Club c, Representative r where c.id = r.club_id and r.username = @username;
+return @ret;
+end;
+
+go
 
 Create FUNCTION availableMatchesToAttend(@date_time datetime)
 RETURNS TABLE
@@ -595,7 +648,7 @@ RETURN
 (   
 SELECT Distinct c1.name as Host_club, c2.name Guest_Club, m.starting_time, s.name stadium_Name
 FROM Match m, Club c1, Club c2, Stadium s , Ticket t
-WHERE t.match_id = m.id And t.status = 1 AND  m.host_club = c1.id AND m.guest_club = c2.id AND m.stadium_id = s.id AND m.starting_time > @date_time
+WHERE t.match_id = m.id And t.status = 1 AND  m.host_club = c1.id AND m.guest_club = c2.id AND m.stadium_id = s.id AND m.starting_time = @date_time
 )
 GO
 
@@ -636,6 +689,21 @@ FROM Club c1, Club c2
 WHERE c1.id <> c2.id AND NOT EXISTS 
 (SELECT * FROM Match m WHERE (m.host_club = c1.id AND m.guest_club = c2.id) OR (m.host_club = c2.id AND m.guest_club = c1.id))
 GO
+
+create proc buyTicket
+@host_club varchar(20),
+@guest_club varchar(20),
+@username varchar(20)
+as
+declare @match_id int;
+select top 1 @match_id = m.id from Match m, Club c1, Club c2 where m.host_club = c1.id and m.guest_club = c2.id and c1.name = @host_club and c2.name = @guest_club;
+declare @ticket_id int;
+select top 1 @ticket_id = id from Ticket where status = 1 and match_id = @match_id;
+update Ticket set status = 0 where id = @ticket_id;
+declare @fan_id varchar(20);
+select top 1 @fan_id = national_id from Fan where username = @username;
+insert into Ticket_Buying_Transactions values(@fan_id, @ticket_id);
+go
 
 CREATE Function clubsNeverPlayed(@clubName VARCHAR(20))
 RETURNS TABLE

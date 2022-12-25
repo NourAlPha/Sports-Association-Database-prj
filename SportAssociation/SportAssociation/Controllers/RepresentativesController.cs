@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using SportAssociation.Data;
 using SportAssociation.Models;
@@ -153,6 +155,89 @@ namespace SportAssociation.Controllers
             
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+
+        public async Task<IActionResult> viewAllInformation()
+        {
+            string connectionstring = "Server=(localdb)\\mssqllocaldb;Database=Proj;Trusted_Connection=True;MultipleActiveResultSets=true";
+
+            var result = new object();
+            DataTable dataTable = new DataTable();
+
+            using (SqlConnection conn = new SqlConnection(connectionstring))
+            {
+                conn.Open();
+                SqlCommand cmd = new SqlCommand("Select c.name, c.location from dbo.Club c, dbo.Representative r where r.club_id = c.id and r.username = '" + Authentication.username + "';", conn);
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                // this will query your database and return the result to your datatable
+                da.Fill(dataTable);
+                conn.Close();
+                da.Dispose();
+            }
+
+            return View(dataTable);
+
+        }
+
+        public async Task<IActionResult> viewUpcomingMatches()
+        {
+            string connectionstring = "Server=(localdb)\\mssqllocaldb;Database=Proj;Trusted_Connection=True;MultipleActiveResultSets=true";
+
+            var result = new object();
+            DataTable dataTable = new DataTable();
+
+            using (SqlConnection conn = new SqlConnection(connectionstring))
+            {
+                conn.Open();
+                SqlCommand cmd = new SqlCommand("select * from dbo.upcomingMatchesOfClub(dbo.getClubNameUsername('" + Authentication.username + "'))", conn);
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                // this will query your database and return the result to your datatable
+                da.Fill(dataTable);
+                conn.Close();
+                da.Dispose();
+            }
+
+            return View(dataTable);
+
+        }
+
+        public async Task<IActionResult> viewAvailableStadiums()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> viewAvailableStadiums(DateTime date)
+        {
+            string connectionstring = "Server=(localdb)\\mssqllocaldb;Database=Proj;Trusted_Connection=True;MultipleActiveResultSets=true";
+
+            var result = new object();
+            DataTable dataTable = new DataTable();
+
+            using (SqlConnection conn = new SqlConnection(connectionstring))
+            {
+                conn.Open();
+                string str = "select * from dbo.viewAvailableStadiumsOn('" + date + "');";
+                SqlCommand cmd = new SqlCommand(str, conn);
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                // this will query your database and return the result to your datatable
+                da.Fill(dataTable);
+                conn.Close();
+                da.Dispose();
+            }
+
+            ViewBag.date = date;
+
+            return View("viewAvailableStadiumsList", dataTable);
+        }
+
+        public async Task<IActionResult> RequestHost(String StadiumName, DateTime date)
+        {
+            var stadiumnameSQLParam = new Microsoft.Data.SqlClient.SqlParameter("@stadium_name", StadiumName);
+            var dateSQLParam = new Microsoft.Data.SqlClient.SqlParameter("@date_time", date);
+            _context.Database.ExecuteSqlRaw("exec dbo.addHostRequestUsername @username='" + Authentication.username + "', @stadium_name={0}, @date_time={1}",
+                stadiumnameSQLParam, dateSQLParam);
+            return View(nameof(Index));
         }
 
         private bool RepresentativeExists(int id)

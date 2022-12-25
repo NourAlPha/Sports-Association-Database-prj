@@ -248,6 +248,14 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRmFuc1xJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
+[D:/prj/Database Project/SportAssociation/SportAssociation/Views/Fans/viewAvailableMatches.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRmFuc1x2aWV3QXZhaWxhYmxlTWF0Y2hlcy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/prj/Database Project/SportAssociation/SportAssociation/Views/Fans/viewAvailableMatchesList.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRmFuc1x2aWV3QXZhaWxhYmxlTWF0Y2hlc0xpc3QuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
 [D:/prj/Database Project/SportAssociation/SportAssociation/Views/Home/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
@@ -256,24 +264,24 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxQcml2YWN5LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/prj/Database Project/SportAssociation/SportAssociation/Views/HostRequests/Create.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9zdFJlcXVlc3RzXENyZWF0ZS5jc2h0bWw=
+[D:/prj/Database Project/SportAssociation/SportAssociation/Views/Host_Request/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9zdF9SZXF1ZXN0XENyZWF0ZS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/prj/Database Project/SportAssociation/SportAssociation/Views/HostRequests/Delete.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9zdFJlcXVlc3RzXERlbGV0ZS5jc2h0bWw=
+[D:/prj/Database Project/SportAssociation/SportAssociation/Views/Host_Request/Delete.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9zdF9SZXF1ZXN0XERlbGV0ZS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/prj/Database Project/SportAssociation/SportAssociation/Views/HostRequests/Details.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9zdFJlcXVlc3RzXERldGFpbHMuY3NodG1s
+[D:/prj/Database Project/SportAssociation/SportAssociation/Views/Host_Request/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9zdF9SZXF1ZXN0XERldGFpbHMuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/prj/Database Project/SportAssociation/SportAssociation/Views/HostRequests/Edit.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9zdFJlcXVlc3RzXEVkaXQuY3NodG1s
+[D:/prj/Database Project/SportAssociation/SportAssociation/Views/Host_Request/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9zdF9SZXF1ZXN0XEVkaXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/prj/Database Project/SportAssociation/SportAssociation/Views/HostRequests/Index.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9zdFJlcXVlc3RzXEluZGV4LmNzaHRtbA==
+[D:/prj/Database Project/SportAssociation/SportAssociation/Views/Host_Request/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9zdF9SZXF1ZXN0XEluZGV4LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
 [D:/prj/Database Project/SportAssociation/SportAssociation/Views/Managers/Create.cshtml]
@@ -294,6 +302,10 @@ build_metadata.AdditionalFiles.CssScope =
 
 [D:/prj/Database Project/SportAssociation/SportAssociation/Views/Managers/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFuYWdlcnNcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/prj/Database Project/SportAssociation/SportAssociation/Views/Managers/viewStadiumInformation.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFuYWdlcnNcdmlld1N0YWRpdW1JbmZvcm1hdGlvbi5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
 [D:/prj/Database Project/SportAssociation/SportAssociation/Views/Matches/Create.cshtml]
@@ -334,6 +346,22 @@ build_metadata.AdditionalFiles.CssScope =
 
 [D:/prj/Database Project/SportAssociation/SportAssociation/Views/Representatives/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwcmVzZW50YXRpdmVzXEluZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/prj/Database Project/SportAssociation/SportAssociation/Views/Representatives/viewAllInformation.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwcmVzZW50YXRpdmVzXHZpZXdBbGxJbmZvcm1hdGlvbi5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/prj/Database Project/SportAssociation/SportAssociation/Views/Representatives/viewAvailableStadiums.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwcmVzZW50YXRpdmVzXHZpZXdBdmFpbGFibGVTdGFkaXVtcy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/prj/Database Project/SportAssociation/SportAssociation/Views/Representatives/viewAvailableStadiumsList.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwcmVzZW50YXRpdmVzXHZpZXdBdmFpbGFibGVTdGFkaXVtc0xpc3QuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/prj/Database Project/SportAssociation/SportAssociation/Views/Representatives/viewUpcomingMatches.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwcmVzZW50YXRpdmVzXHZpZXdVcGNvbWluZ01hdGNoZXMuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
 [D:/prj/Database Project/SportAssociation/SportAssociation/Views/Shared/Error.cshtml]
