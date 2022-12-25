@@ -14,11 +14,11 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label for="host_club" class="control-label">Host Club</label>
-                <input name="host_club" class="form-control" />
+                <input name="host_club" class="form-control" required/>
             </div>
             <div class="form-group">
                 <label for="guest_club" class="control-label">Guest Club</label>
-                <input name="guest_club" class="form-control" />
+                <input name="guest_club" class="form-control" required/>
             </div>
             <div class="form-group">
                 <label asp-for="starting_time" class="control-label">Starting Time</label>

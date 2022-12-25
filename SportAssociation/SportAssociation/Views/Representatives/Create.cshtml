@@ -4,6 +4,13 @@
     ViewData["Title"] = "Create";
 }
 
+@if(TempData["alertMessage"] != null)
+{
+    <script type="text/javascript">
+        alert('@TempData["alertMessage"]');
+    </script>
+}
+
 <h1>Register</h1>
 
 <h4>Representative</h4>
@@ -19,7 +26,7 @@
             </div>
             <div class="form-group">
                 <label for="ClubName" class="control-label">Club Name</label>
-                <input name="ClubName" class="form-control" />
+                <input name="ClubName" class="form-control" required/>
             </div>
             <div class="form-group">
                 <label asp-for="Username" class="control-label"></label>
@@ -28,17 +35,13 @@
             </div>
             <div class="form-group">
                 <label for="Password" class="control-label">Password</label>
-                <input name="Password" class="form-control" />
+                <input name="Password" class="form-control" type="password" required/>
             </div>
             <div class="form-group">
                 <input type="submit" value="Register" class="btn btn-primary" />
             </div>
         </form>
     </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
 </div>
 
 @section Scripts {

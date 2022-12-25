@@ -62,6 +62,22 @@ namespace SportAssociation.Controllers
             var usernameSQLParam = new Microsoft.Data.SqlClient.SqlParameter("@username", manager.username);
             var passwordSQLParam = new Microsoft.Data.SqlClient.SqlParameter("@password", Password);
             var stadiumnameSQLParam = new Microsoft.Data.SqlClient.SqlParameter("@stadium_name", StadiumName);
+            var outputSQLParam = new Microsoft.Data.SqlClient.SqlParameter("@out", System.Data.SqlDbType.Bit) { Direction = System.Data.ParameterDirection.Output };
+            _context.Database.ExecuteSqlRaw("exec dbo.checkStadiumExists @stadium_name='" + StadiumName + "', @out={0} out", outputSQLParam);
+
+            bool output = false;
+
+            if (outputSQLParam.Value != DBNull.Value)
+            {
+                output = (bool)outputSQLParam.Value;
+            }
+
+            if (!output)
+            {
+                TempData["alertMessage"] = "Stadium does not exist!";
+                return View();
+            }
+
             _context.Database.ExecuteSqlRaw("exec dbo.addStadiumManager @name={0}, @stadium_name={1}, @username={2}, @password={3}",
                 nameSQLParam, stadiumnameSQLParam, usernameSQLParam, passwordSQLParam);
             Authentication.isAuthenticated = true;

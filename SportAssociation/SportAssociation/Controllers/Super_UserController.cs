@@ -18,6 +18,7 @@ namespace SportAssociation.Controllers
     {
         private readonly ApplicationDbContext _context;
 
+        public static string currentUser = "Balabizo";
         public Super_UserController(ApplicationDbContext context)
         {
             _context = context;
@@ -48,6 +49,8 @@ namespace SportAssociation.Controllers
             {
                 output = outputSQLParam.Value.ToString();
             }
+
+            currentUser = output;
 
             if(output == "Balabizo")
             {
@@ -89,6 +92,7 @@ namespace SportAssociation.Controllers
         public async Task<IActionResult> Logout()
         {
             Authentication.isAuthenticated = false;
+            currentUser = "Balabizo";
             return RedirectToAction("Index", "Home");
         }
 

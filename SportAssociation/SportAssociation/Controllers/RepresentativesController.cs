@@ -62,6 +62,20 @@ namespace SportAssociation.Controllers
             var usernameSQLParam = new Microsoft.Data.SqlClient.SqlParameter("@representative_username", representative.Username);
             var passwordSQLParam = new Microsoft.Data.SqlClient.SqlParameter("@password", Password);
             var clubnameSQLParam = new Microsoft.Data.SqlClient.SqlParameter("@club_name", ClubName);
+            var outputSQLParam = new Microsoft.Data.SqlClient.SqlParameter("@out", System.Data.SqlDbType.Bit) { Direction = System.Data.ParameterDirection.Output };
+            _context.Database.ExecuteSqlRaw("exec dbo.checkClubExists @club_name='" + ClubName + "', @out={0} out;", outputSQLParam);
+
+            bool output = false;
+            if (outputSQLParam.Value != DBNull.Value)
+            {
+                output = (bool)outputSQLParam.Value;
+            }
+            if (!output)
+            {
+                TempData["alertMessage"] = "Club does not exist!";
+                return View();
+            }
+
             _context.Database.ExecuteSqlRaw("exec dbo.addRepresentative @name={0}, @club_name={1}, @representative_username={2}, @password={3}",
                 nameSQLParam, clubnameSQLParam, usernameSQLParam, passwordSQLParam);
             Authentication.isAuthenticated = true;

@@ -135,6 +135,7 @@ select * from Association_Manager
 select * from Super_User
 select * from Ticket
 select * from Ticket_Buying_Transactions
+select * from Representative
 
 go
 CREATE FUNCTION getMatchID(@hname varchar(20) , @gname varchar(20), @date datetime) 
@@ -689,6 +690,26 @@ FROM Club c1, Club c2
 WHERE c1.id <> c2.id AND NOT EXISTS 
 (SELECT * FROM Match m WHERE (m.host_club = c1.id AND m.guest_club = c2.id) OR (m.host_club = c2.id AND m.guest_club = c1.id))
 GO
+
+create proc checkStadiumExists
+@stadium_name varchar(20),
+@out bit output
+as
+if(exists(select * from Stadium where name = @stadium_name))
+set @out = 1;
+else
+set @out = 0;
+go
+
+create proc checkClubExists
+@club_name varchar(20),
+@out bit output
+as
+if(exists(select * from Club where name = @club_name))
+set @out = 1;
+else
+set @out = 0;
+go
 
 create proc buyTicket
 @host_club varchar(20),
