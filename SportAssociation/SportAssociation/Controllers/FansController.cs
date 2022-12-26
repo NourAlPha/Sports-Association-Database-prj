@@ -68,10 +68,39 @@ namespace SportAssociation.Controllers
             var phonenumberSQLParam = new Microsoft.Data.SqlClient.SqlParameter("@phone_num", fan.phone_number);
             var birthdateSQLParam = new Microsoft.Data.SqlClient.SqlParameter("@birth_date", fan.birth_date);
             var addressSQLParam = new Microsoft.Data.SqlClient.SqlParameter("@address", fan.Address);
+            var outputSQLParam = new Microsoft.Data.SqlClient.SqlParameter("@out", System.Data.SqlDbType.Bit) { Direction = System.Data.ParameterDirection.Output };
+            _context.Database.ExecuteSqlRaw("exec dbo.fanAlreadyExists @national_id='" + fan.national_id + "', @out={0} out;", outputSQLParam);
+
+            bool output = false;
+            if (outputSQLParam.Value != DBNull.Value)
+            {
+                output = (bool)outputSQLParam.Value;
+            }
+            if (output)
+            {
+                TempData["alertMessage"] = "Fan already exists!";
+                return View();
+            }
+
+            _context.Database.ExecuteSqlRaw("exec dbo.checkUsernameExists @username='" + fan.Username + "', @out={0} out", outputSQLParam);
+
+            output = false;
+            if (outputSQLParam.Value != DBNull.Value)
+            {
+                output = (bool)outputSQLParam.Value;
+            }
+
+            if (output)
+            {
+                TempData["alertMessage"] = "Username is used!";
+                return View();
+            }
+
             _context.Database.ExecuteSqlRaw("exec dbo.addFan @name={0}, @username={1}, @password={2}, @national_id={3}, @birth_date={4}, @address={5}, @phone_num={6}",
                 nameSQLParam, usernameSQLParam, passwordSQLParam, nationalidSQLParam, birthdateSQLParam, addressSQLParam, phonenumberSQLParam);
             Authentication.isAuthenticated = true;
             Authentication.username= fan.Username;
+            Super_UserController.currentUser = "Fan";
             return RedirectToAction(nameof(Index));
         }
 

@@ -4,6 +4,13 @@
     ViewData["Title"] = "Create";
 }
 
+@if (TempData["alertMessage"] != null)
+{
+    <script type="text/javascript">
+        alert('@TempData["alertMessage"]');
+    </script>
+}
+
 <h1>Create</h1>
 
 <h4>Match</h4>
@@ -14,20 +21,20 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label for="host_club" class="control-label">Host Club</label>
-                <input name="host_club" class="form-control" required/>
+                <input name="host_club" class="form-control" maxlength="20" required />
             </div>
             <div class="form-group">
                 <label for="guest_club" class="control-label">Guest Club</label>
-                <input name="guest_club" class="form-control" required/>
+                <input name="guest_club" class="form-control" maxlength="20" required />
             </div>
             <div class="form-group">
                 <label asp-for="starting_time" class="control-label">Starting Time</label>
-                <input asp-for="starting_time" class="form-control" />
+                <input asp-for="starting_time" class="form-control" maxlength="20" />
                 <span asp-validation-for="starting_time" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="ending_time" class="control-label">Ending Time</label>
-                <input asp-for="ending_time" class="form-control" />
+                <input asp-for="ending_time" class="form-control" maxlength="20" />
                 <span asp-validation-for="ending_time" class="text-danger"></span>
             </div>
             <div class="form-group">

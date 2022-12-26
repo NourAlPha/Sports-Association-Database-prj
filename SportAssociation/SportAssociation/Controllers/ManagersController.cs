@@ -78,10 +78,40 @@ namespace SportAssociation.Controllers
                 return View();
             }
 
+            _context.Database.ExecuteSqlRaw("exec dbo.checkUsernameExists @username='" + manager.username +"', @out={0} out", outputSQLParam);
+
+            output = false;
+            if (outputSQLParam.Value != DBNull.Value)
+            {
+                output = (bool)outputSQLParam.Value;
+            }
+
+            if(output)
+            {
+                TempData["alertMessage"] = "Username is used!";
+                return View();
+            }
+
+            _context.Database.ExecuteSqlRaw("exec dbo.stadiumHasManager @stadium_name='" + StadiumName + "', @out={0} out", outputSQLParam);
+
+            output = false;
+            if (outputSQLParam.Value != DBNull.Value)
+            {
+                output = (bool)outputSQLParam.Value;
+            }
+
+            if (output)
+            {
+                TempData["alertMessage"] = "This stadium has a manager!";
+                return View();
+            }
+
+
             _context.Database.ExecuteSqlRaw("exec dbo.addStadiumManager @name={0}, @stadium_name={1}, @username={2}, @password={3}",
                 nameSQLParam, stadiumnameSQLParam, usernameSQLParam, passwordSQLParam);
             Authentication.isAuthenticated = true;
             Authentication.username = manager.username;
+            Super_UserController.currentUser = "Manager";
             return RedirectToAction(nameof(Index));
         }
 

@@ -4,6 +4,13 @@
     ViewData["Title"] = "Create";
 }
 
+@if (TempData["alertMessage"] != null)
+{
+    <script type="text/javascript">
+        alert('@TempData["alertMessage"]');
+    </script>
+}
+
 <h1>Create</h1>
 
 <h4>Stadium</h4>

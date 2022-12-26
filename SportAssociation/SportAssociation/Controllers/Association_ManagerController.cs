@@ -61,10 +61,29 @@ namespace SportAssociation.Controllers
             var nameSQLParam = new Microsoft.Data.SqlClient.SqlParameter("@name", association_Manager.Name);
             var usernameSQLParam = new Microsoft.Data.SqlClient.SqlParameter("@username", association_Manager.Username);
             var passwordSQLParam = new Microsoft.Data.SqlClient.SqlParameter("@password", Password);
+            var outputSQLParam = new Microsoft.Data.SqlClient.SqlParameter("@out", System.Data.SqlDbType.Bit) { Direction = System.Data.ParameterDirection.Output };
+
+            bool output = false;
+
+            _context.Database.ExecuteSqlRaw("exec dbo.checkUsernameExists @username='" + association_Manager.Username + "', @out={0} out", outputSQLParam);
+
+            output = false;
+            if (outputSQLParam.Value != DBNull.Value)
+            {
+                output = (bool)outputSQLParam.Value;
+            }
+
+            if (output)
+            {
+                TempData["alertMessage"] = "Username is used!";
+                return View();
+            }
+
             _context.Database.ExecuteSqlRaw("exec dbo.addAssociationManager @name={0}, @user_name={1}, @password={2}",
                 nameSQLParam, usernameSQLParam, passwordSQLParam);
             Authentication.isAuthenticated = true;
             Authentication.username = association_Manager.Username;
+            Super_UserController.currentUser = "Association_Manager";
             return RedirectToAction(nameof(Index));
         }
 

@@ -54,6 +54,7 @@ namespace SportAssociation.Controllers
 
             if(output == "Balabizo")
             {
+                TempData["alertMessage"] = "Wrong Credentials!";
                 return RedirectToAction("Login");
             }
             else if(output == "Fan")

@@ -76,10 +76,39 @@ namespace SportAssociation.Controllers
                 return View();
             }
 
+            _context.Database.ExecuteSqlRaw("exec dbo.checkUsernameExists @username='" + representative.Username + "', @out={0} out", outputSQLParam);
+
+            output = false;
+            if (outputSQLParam.Value != DBNull.Value)
+            {
+                output = (bool)outputSQLParam.Value;
+            }
+
+            if (output)
+            {
+                TempData["alertMessage"] = "Username is used!";
+                return View();
+            }
+
+            _context.Database.ExecuteSqlRaw("exec dbo.clubHasRepresentative @club_name='" + ClubName + "', @out={0} out", outputSQLParam);
+
+            output = false;
+            if (outputSQLParam.Value != DBNull.Value)
+            {
+                output = (bool)outputSQLParam.Value;
+            }
+
+            if (output)
+            {
+                TempData["alertMessage"] = "This club has a representative!";
+                return View();
+            }
+
             _context.Database.ExecuteSqlRaw("exec dbo.addRepresentative @name={0}, @club_name={1}, @representative_username={2}, @password={3}",
                 nameSQLParam, clubnameSQLParam, usernameSQLParam, passwordSQLParam);
             Authentication.isAuthenticated = true;
             Authentication.username = representative.Username;
+            Super_UserController.currentUser = "Representative";
             return RedirectToAction(nameof(Index));
         }
 

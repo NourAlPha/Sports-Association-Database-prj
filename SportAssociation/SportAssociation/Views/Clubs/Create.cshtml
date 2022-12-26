@@ -4,6 +4,13 @@
     ViewData["Title"] = "Create";
 }
 
+@if (TempData["alertMessage"] != null)
+{
+    <script type="text/javascript">
+        alert('@TempData["alertMessage"]');
+    </script>
+}
+
 <h1>Create</h1>
 
 <h4>Club</h4>
@@ -14,12 +21,12 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="name" class="control-label"></label>
-                <input asp-for="name" class="form-control" />
+                <input asp-for="name" class="form-control" maxlength="20"/>
                 <span asp-validation-for="name" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="location" class="control-label"></label>
-                <input asp-for="location" class="form-control" />
+                <input asp-for="location" class="form-control" maxlength="20"/>
                 <span asp-validation-for="location" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -27,10 +34,6 @@
             </div>
         </form>
     </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
 </div>
 
 @section Scripts {

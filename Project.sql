@@ -136,6 +136,9 @@ select * from Super_User
 select * from Ticket
 select * from Ticket_Buying_Transactions
 select * from Representative
+select * from Match
+select * from Fan
+
 
 go
 CREATE FUNCTION getMatchID(@hname varchar(20) , @gname varchar(20), @date datetime) 
@@ -530,6 +533,46 @@ WHERE H.representative_id = R.id AND H.manager_id = dbo.getManagerID2(@username)
 ) 
 GO
 
+create proc stadiumHasManager
+@stadium_name varchar(20),
+@out bit output
+as
+if(exists(select * from Manager m, Stadium s where m.stadium_id = s.id and s.name = @stadium_name))
+set @out = 1;
+else
+set @out = 0;
+go
+
+create proc clubHasRepresentative
+@club_name varchar(20),
+@out bit output
+as
+if(exists(select * from Representative r, Club c where r.club_id = c.id and c.name = @club_name))
+set @out = 1;
+else
+set @out = 0;
+go
+
+create proc fanAlreadyExists
+@national_id varchar(20),
+@out bit output
+as
+if(exists(select * from Fan where national_id = @national_id))
+set @out = 1;
+else
+set @out = 0;
+go
+
+create proc checkUsernameExists
+@username varchar(20),
+@out bit output
+as
+if(exists(select * from Super_User where username = @username))
+set @out = 1;
+else
+set @out = 0;
+go
+
 CREATE PROC checkExists
 @username VARCHAR(20),
 @password VARCHAR(20),
@@ -652,6 +695,10 @@ FROM Match m, Club c1, Club c2, Stadium s , Ticket t
 WHERE t.match_id = m.id And t.status = 1 AND  m.host_club = c1.id AND m.guest_club = c2.id AND m.stadium_id = s.id AND m.starting_time = @date_time
 )
 GO
+
+
+
+go
 
 CREATE PROC purchaseTicket
 @fan_national_id VARCHAR(20),

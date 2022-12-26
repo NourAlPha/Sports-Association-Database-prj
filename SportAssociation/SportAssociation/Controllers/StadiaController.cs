@@ -58,6 +58,22 @@ namespace SportAssociation.Controllers
         {
             if (ModelState.IsValid)
             {
+                var outputSQLParam = new Microsoft.Data.SqlClient.SqlParameter("@out", System.Data.SqlDbType.Bit) { Direction = System.Data.ParameterDirection.Output };
+                _context.Database.ExecuteSqlRaw("exec dbo.checkStadiumExists @stadium_name='" + stadium.Name + "', @out={0} out", outputSQLParam);
+
+                bool output = false;
+
+                if (outputSQLParam.Value != DBNull.Value)
+                {
+                    output = (bool)outputSQLParam.Value;
+                }
+
+                if (output)
+                {
+                    TempData["alertMessage"] = "Stadium already exists!";
+                    return View();
+                }
+
                 _context.Add(stadium);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));

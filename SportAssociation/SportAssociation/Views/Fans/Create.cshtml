@@ -4,6 +4,13 @@
     ViewData["Title"] = "Create";
 }
 
+@if (TempData["alertMessage"] != null)
+{
+    <script type="text/javascript">
+        alert('@TempData["alertMessage"]');
+    </script>
+}
+
 <h1>Register</h1>
 
 <h4>Fan</h4>
@@ -14,12 +21,12 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="national_id" class="control-label"></label>
-                <input asp-for="national_id" class="form-control" />
+                <input asp-for="national_id" class="form-control" maxlength="20"/>
                 <span asp-validation-for="national_id" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
+                <input asp-for="Name" class="form-control" maxlength="20"/>
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -29,22 +36,22 @@
             </div>
             <div class="form-group">
                 <label asp-for="Address" class="control-label"></label>
-                <input asp-for="Address" class="form-control" />
+                <input asp-for="Address" class="form-control" maxlength="20"/>
                 <span asp-validation-for="Address" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="phone_number" class="control-label"></label>
-                <input asp-for="phone_number" class="form-control" />
+                <input asp-for="phone_number" class="form-control" maxlength="20"/>
                 <span asp-validation-for="phone_number" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Username" class="control-label"></label>
-                <input asp-for="Username" class="form-control" />
+                <input asp-for="Username" class="form-control" maxlength="20"/>
                 <span asp-validation-for="Username" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label for="Password" class="control-label">Password</label>
-                <input name="Password" class="form-control" type="password" required />
+                <input name="Password" class="form-control" type="password" maxlength="20" required />
             </div>
             <div class="form-group">
                 <input type="submit" value="Register" class="btn btn-primary" />

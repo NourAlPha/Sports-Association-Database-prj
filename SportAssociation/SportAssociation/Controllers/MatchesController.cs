@@ -60,6 +60,42 @@ namespace SportAssociation.Controllers
             var guestclubnameSQLParam = new Microsoft.Data.SqlClient.SqlParameter("@guest_name", guest_club);
             var startingtimeSQLParam = new Microsoft.Data.SqlClient.SqlParameter("@start_time", match.starting_time);
             var endingtimeSQLParam = new Microsoft.Data.SqlClient.SqlParameter("@end_time", match.ending_time);
+            var outputSQLParam = new Microsoft.Data.SqlClient.SqlParameter("@out", System.Data.SqlDbType.Bit) { Direction = System.Data.ParameterDirection.Output };
+            _context.Database.ExecuteSqlRaw("exec dbo.checkClubExists @club_name='" + host_club + "', @out={0} out", outputSQLParam);
+
+            bool output = false;
+
+            if (outputSQLParam.Value != DBNull.Value)
+            {
+                output = (bool)outputSQLParam.Value;
+            }
+
+            if (!output)
+            {
+                TempData["alertMessage"] = "Host Club does not exist!";
+                return View();
+            }
+
+            _context.Database.ExecuteSqlRaw("exec dbo.checkClubExists @club_name='" + guest_club + "', @out={0} out", outputSQLParam);
+            
+            output = false;
+            if (outputSQLParam.Value != DBNull.Value)
+            {
+                output = (bool)outputSQLParam.Value;
+            }
+
+            if (!output)
+            {
+                TempData["alertMessage"] = "Guest Club does not exist!";
+                return View();
+            }
+
+            if(host_club == guest_club)
+            {
+                TempData["alertMessage"] = "The club can not match himself!";
+                return View();
+            }
+
             _context.Database.ExecuteSqlRaw("exec dbo.addNewMatch @host_name={0}, @guest_name={1}, @start_time={2}, @end_time={3}",
                 hostclubnameSQLParam, guestclubnameSQLParam, startingtimeSQLParam, endingtimeSQLParam);
             return RedirectToAction(nameof(Index));
