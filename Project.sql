@@ -764,7 +764,7 @@ create proc validRequest
 @date datetime,
 @out bit output
 as
-if(exists(select * from Representative r, Stadium s, Manager m, Club c, Match ma, Host_Request h where r.club_id = c.id and s.id = m.stadium_id and ma.host_club = c.id and h.manager_id = m.id and h.match_id = ma.id and h.representative_id = r.id and r.username = @username and s.name = @stadium_name and ma.starting_time = @date))
+if(exists(select * from Representative r, Stadium s, Manager m, Club c, Match ma, Host_Request h where r.club_id = c.id and s.id = m.stadium_id and ma.host_club = c.id and h.manager_id = m.id and h.match_id = ma.id and h.representative_id = r.id and r.username = @username and s.name = @stadium_name and ma.starting_time = @date) or not exists(select * from Stadium s where s.name = @stadium_name and exists(select * from Manager where stadium_id = s.id)))
 set @out = 0;
 else
 set @out = 1;
