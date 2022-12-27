@@ -139,10 +139,6 @@ select * from Representative
 select * from Match
 select * from Fan
 
-declare @ret bit;
-exec matchExists @username='lapo', @date='4/4/2023 10:00:00 PM', @out=@ret output;
-print @ret;
-
 go
 CREATE FUNCTION getMatchID(@hname varchar(20) , @gname varchar(20), @date datetime) 
 RETURNS INT
@@ -603,7 +599,7 @@ SET @table_name = 'Association_Manager';
 if(EXISTS(SELECT * FROM Association_Manager WHERE username = @username))
 SET @out  = @table_name;
 SET @table_name = 'Fan';
-if(EXISTS(SELECT * FROM Fan WHERE username = @username))
+if(EXISTS(SELECT * FROM Fan WHERE username = @username and status = 1))
 SET @out  = @table_name;
 SET @table_name = 'Manager';
 if(EXISTS(SELECT * FROM Manager WHERE username = @username))
