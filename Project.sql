@@ -139,6 +139,9 @@ select * from Representative
 select * from Match
 select * from Fan
 
+declare @ret bit;
+exec matchExists @username='lapo', @date='4/4/2023 10:00:00 PM', @out=@ret output;
+print @ret;
 
 go
 CREATE FUNCTION getMatchID(@hname varchar(20) , @gname varchar(20), @date datetime) 
@@ -722,6 +725,17 @@ SET host_club = dbo.getClubID(@guest_club) , guest_club = dbo.getClubID(@host_cl
 WHERE id = dbo.getMatchID(@host_club, @guest_club, @date_time)
 GO
 
+create proc matchExists
+@username varchar(20),
+@date datetime,
+@out bit output
+as
+if(exists(select * from Match m, Club c, Representative r where r.club_id = c.id and r.username = @username and c.id = m.host_club and m.starting_time = @date and m.stadium_id is null))
+set @out = 1;
+else
+set @out = 0;
+go
+
 CREATE view matchesPerTeam
 AS
 SELECT c.name, COUNT(m.id) AS matches
@@ -746,6 +760,18 @@ if(exists(select * from Stadium where name = @stadium_name))
 set @out = 1;
 else
 set @out = 0;
+go
+
+create proc validRequest
+@username varchar(20),
+@stadium_name varchar(20),
+@date datetime,
+@out bit output
+as
+if(exists(select * from Representative r, Stadium s, Manager m, Club c, Match ma, Host_Request h where r.club_id = c.id and s.id = m.stadium_id and ma.host_club = c.id and h.manager_id = m.id and h.match_id = ma.id and h.representative_id = r.id and r.username = @username and s.name = @stadium_name and ma.starting_time = @date))
+set @out = 0;
+else
+set @out = 1;
 go
 
 create proc checkClubExists

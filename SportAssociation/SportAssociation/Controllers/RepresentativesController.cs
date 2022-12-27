@@ -271,6 +271,31 @@ namespace SportAssociation.Controllers
 
             ViewBag.date = date;
 
+            var outputSQLParam = new Microsoft.Data.SqlClient.SqlParameter("@out", System.Data.SqlDbType.Bit) { Direction = System.Data.ParameterDirection.Output };
+            _context.Database.ExecuteSqlRaw("exec matchExists @username='" + Authentication.username + "', @date='" + date + "', @out={0} out", outputSQLParam);
+
+            bool output = false;
+            if (outputSQLParam.Value != DBNull.Value)
+            {
+                output = (bool)outputSQLParam.Value;
+            }
+            ViewBag.validDate = output;
+
+            Dictionary<string, bool> validRequest = new Dictionary<string, bool>();
+
+            foreach(DataRow row in dataTable.Rows)
+            {
+                _context.Database.ExecuteSqlRaw("exec validRequest @username='" + Authentication.username + "', @stadium_name='" + row[dataTable.Columns[0]] + "', @date='" + date + "', @out={0} out", outputSQLParam);
+                output = false;
+                if (outputSQLParam.Value != DBNull.Value)
+                {
+                    output = (bool)outputSQLParam.Value;
+                }
+                validRequest.Add((string)row[dataTable.Columns[0]], output);
+            }
+            ViewBag.validRequest = validRequest;
+            
+
             return View("viewAvailableStadiumsList", dataTable);
         }
 
