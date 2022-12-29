@@ -27,7 +27,10 @@ namespace SportAssociation.Controllers
         // GET: Super_User/Login
         public IActionResult Login()
         {
-            return View();
+            if(currentUser == "Balabizo")
+                return View();
+            TempData["alertMessage"] = "You can not access this page.";
+            return RedirectToAction("Index", "Home");
         }
 
         // POST: Super_User/Login
@@ -37,64 +40,81 @@ namespace SportAssociation.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login([Bind("Username,Password")] Super_User super_User)
         {
-            var usernameSQLParam = new Microsoft.Data.SqlClient.SqlParameter("@username", super_User.Username);
-            var passwordSQLParam = new Microsoft.Data.SqlClient.SqlParameter("@password", super_User.Password);
-            var outputSQLParam = new Microsoft.Data.SqlClient.SqlParameter("@out", System.Data.SqlDbType.VarChar, 20) { Direction = System.Data.ParameterDirection.Output };
-            _context.Database.ExecuteSqlRaw("exec dbo.checkRole @username={0}, @password={1}, @out={2} out",
-                usernameSQLParam, passwordSQLParam, outputSQLParam);
+            if (currentUser == "Balabizo")
+            {
+                var usernameSQLParam = new Microsoft.Data.SqlClient.SqlParameter("@username", super_User.Username);
+                var passwordSQLParam = new Microsoft.Data.SqlClient.SqlParameter("@password", super_User.Password);
+                var outputSQLParam = new Microsoft.Data.SqlClient.SqlParameter("@out", System.Data.SqlDbType.VarChar, 20) { Direction = System.Data.ParameterDirection.Output };
+                _context.Database.ExecuteSqlRaw("exec dbo.checkRole @username={0}, @password={1}, @out={2} out",
+                    usernameSQLParam, passwordSQLParam, outputSQLParam);
 
-            string output = "Balabizo";
+                string output = "Balabizo";
 
-            if(outputSQLParam.Value != DBNull.Value)
-            {
-                output = outputSQLParam.Value.ToString();
-            }
+                if (outputSQLParam.Value != DBNull.Value)
+                {
+                    output = outputSQLParam.Value.ToString();
+                }
 
-            currentUser = output;
+                currentUser = output;
 
-            if(output == "Balabizo")
-            {
-                TempData["alertMessage"] = "Wrong Credentials!";
-                return RedirectToAction("Login");
-            }
-            else if(output == "Fan")
-            {
-                //TODO blocked fan can't login.
-                Authentication.isAuthenticated = true;
-                Authentication.username = super_User.Username;
-                return RedirectToAction("Index", "fans");
-            }else if(output == "Manager")
-            {
-                Authentication.isAuthenticated = true;
-                Authentication.username = super_User.Username;
-                return RedirectToAction("Index", "managers");
-            }
-            else if(output == "Representative")
-            {
-                Authentication.isAuthenticated = true;
-                Authentication.username = super_User.Username;
-                return RedirectToAction("Index", "representatives");
-            }
-            else if(output == "System_Admin")
-            {
-                Authentication.isAuthenticated = true;
-                Authentication.username = super_User.Username;
-                return RedirectToAction("Index", "System_Admin");
+                if (output == "Balabizo")
+                {
+                    TempData["alertMessage"] = "Wrong Credentials!";
+                    return RedirectToAction("Login");
+                }
+                else if (output == "Fan")
+                {
+                    Authentication.isAuthenticated = true;
+                    Authentication.username = super_User.Username;
+                    return RedirectToAction("Index", "fans");
+                }
+                else if (output == "Manager")
+                {
+                    Authentication.isAuthenticated = true;
+                    Authentication.username = super_User.Username;
+                    return RedirectToAction("Index", "managers");
+                }
+                else if (output == "Representative")
+                {
+                    Authentication.isAuthenticated = true;
+                    Authentication.username = super_User.Username;
+                    return RedirectToAction("Index", "representatives");
+                }
+                else if (output == "System_Admin")
+                {
+                    Authentication.isAuthenticated = true;
+                    Authentication.username = super_User.Username;
+                    return RedirectToAction("Index", "System_Admin");
+                }
+                else
+                {
+                    Authentication.isAuthenticated = true;
+                    Authentication.username = super_User.Username;
+                    return RedirectToAction("Index", "Association_Manager");
+                }
             }
             else
             {
-                Authentication.isAuthenticated = true;
-                Authentication.username = super_User.Username;
-                return RedirectToAction("Index", "Association_Manager");
+                TempData["alertMessage"] = "You can not access this page.";
+                return RedirectToAction("Index", "Home");
             }
 
         }
 
         public async Task<IActionResult> Logout()
         {
-            Authentication.isAuthenticated = false;
-            currentUser = "Balabizo";
-            return RedirectToAction("Index", "Home");
+            if (currentUser != "Balabizo")
+            {
+                Authentication.isAuthenticated = false;
+                Authentication.username = "";
+                currentUser = "Balabizo";
+                return RedirectToAction("Index", "Home");
+            }
+            else
+            {
+                TempData["alertMessage"] = "You can not access this page.";
+                return RedirectToAction("Index", "Home");
+            }
         }
 
         private bool Super_UserExists(string id)

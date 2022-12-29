@@ -138,6 +138,7 @@ select * from Ticket_Buying_Transactions
 select * from Representative
 select * from Match
 select * from Fan
+select * from Host_Request
 
 go
 CREATE FUNCTION getMatchID(@hname varchar(20) , @gname varchar(20), @date datetime) 
@@ -744,7 +745,7 @@ CREATE view clubsNeverMatched
 AS
 SELECT c1.name AS First_Club, c2.name AS Second_Club
 FROM Club c1, Club c2
-WHERE c1.id <> c2.id AND NOT EXISTS 
+WHERE c1.id > c2.id AND NOT EXISTS 
 (SELECT * FROM Match m WHERE (m.host_club = c1.id AND m.guest_club = c2.id) OR (m.host_club = c2.id AND m.guest_club = c1.id))
 GO
 

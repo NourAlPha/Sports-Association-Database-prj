@@ -22,31 +22,45 @@ namespace SportAssociation.Controllers
         // GET: Ticket_Buying_Transactions
         public async Task<IActionResult> Index()
         {
-              return View(await _context.Ticket_Buying_Transactions.ToListAsync());
+            if(Super_UserController.currentUser == "")
+                return View(await _context.Ticket_Buying_Transactions.ToListAsync());
+            TempData["alertMessage"] = "You can not access this page.";
+            return RedirectToAction("Index", "Home");
         }
 
         // GET: Ticket_Buying_Transactions/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.Ticket_Buying_Transactions == null)
+            if (Super_UserController.currentUser == "")
             {
-                return NotFound();
-            }
+                if (id == null || _context.Ticket_Buying_Transactions == null)
+                {
+                    return NotFound();
+                }
 
-            var ticket_Buying_Transactions = await _context.Ticket_Buying_Transactions
-                .FirstOrDefaultAsync(m => m.ticket_id == id);
-            if (ticket_Buying_Transactions == null)
+                var ticket_Buying_Transactions = await _context.Ticket_Buying_Transactions
+                    .FirstOrDefaultAsync(m => m.ticket_id == id);
+                if (ticket_Buying_Transactions == null)
+                {
+                    return NotFound();
+                }
+
+                return View(ticket_Buying_Transactions);
+            }
+            else
             {
-                return NotFound();
+                TempData["alertMessage"] = "You can not access this page.";
+                return RedirectToAction("Index", "Home");
             }
-
-            return View(ticket_Buying_Transactions);
         }
 
         // GET: Ticket_Buying_Transactions/Create
         public IActionResult Create()
         {
-            return View();
+            if(Super_UserController.currentUser == "")
+                return View();
+            TempData["alertMessage"] = "You can not access this page.";
+            return RedirectToAction("Index", "Home");
         }
 
         // POST: Ticket_Buying_Transactions/Create
@@ -56,29 +70,45 @@ namespace SportAssociation.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("fan_id,ticket_id")] Ticket_Buying_Transactions ticket_Buying_Transactions)
         {
-            if (ModelState.IsValid)
+            if (Super_UserController.currentUser == "")
             {
-                _context.Add(ticket_Buying_Transactions);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                if (ModelState.IsValid)
+                {
+                    _context.Add(ticket_Buying_Transactions);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+                return View(ticket_Buying_Transactions);
             }
-            return View(ticket_Buying_Transactions);
+            else
+            {
+                TempData["alertMessage"] = "You can not access this page.";
+                return RedirectToAction("Index", "Home");
+            }
         }
 
         // GET: Ticket_Buying_Transactions/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Ticket_Buying_Transactions == null)
+            if (Super_UserController.currentUser == "")
             {
-                return NotFound();
-            }
+                if (id == null || _context.Ticket_Buying_Transactions == null)
+                {
+                    return NotFound();
+                }
 
-            var ticket_Buying_Transactions = await _context.Ticket_Buying_Transactions.FindAsync(id);
-            if (ticket_Buying_Transactions == null)
-            {
-                return NotFound();
+                var ticket_Buying_Transactions = await _context.Ticket_Buying_Transactions.FindAsync(id);
+                if (ticket_Buying_Transactions == null)
+                {
+                    return NotFound();
+                }
+                return View(ticket_Buying_Transactions);
             }
-            return View(ticket_Buying_Transactions);
+            else
+            {
+                TempData["alertMessage"] = "You can not access this page.";
+                return RedirectToAction("Index", "Home");
+            }
         }
 
         // POST: Ticket_Buying_Transactions/Edit/5
@@ -88,50 +118,66 @@ namespace SportAssociation.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("fan_id,ticket_id")] Ticket_Buying_Transactions ticket_Buying_Transactions)
         {
-            if (id != ticket_Buying_Transactions.ticket_id)
+            if (Super_UserController.currentUser == "")
             {
-                return NotFound();
-            }
+                if (id != ticket_Buying_Transactions.ticket_id)
+                {
+                    return NotFound();
+                }
 
-            if (ModelState.IsValid)
-            {
-                try
+                if (ModelState.IsValid)
                 {
-                    _context.Update(ticket_Buying_Transactions);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!Ticket_Buying_TransactionsExists(ticket_Buying_Transactions.ticket_id))
+                    try
                     {
-                        return NotFound();
+                        _context.Update(ticket_Buying_Transactions);
+                        await _context.SaveChangesAsync();
                     }
-                    else
+                    catch (DbUpdateConcurrencyException)
                     {
-                        throw;
+                        if (!Ticket_Buying_TransactionsExists(ticket_Buying_Transactions.ticket_id))
+                        {
+                            return NotFound();
+                        }
+                        else
+                        {
+                            throw;
+                        }
                     }
+                    return RedirectToAction(nameof(Index));
                 }
-                return RedirectToAction(nameof(Index));
+                return View(ticket_Buying_Transactions);
             }
-            return View(ticket_Buying_Transactions);
+            else
+            {
+                TempData["alertMessage"] = "You can not access this page.";
+                return RedirectToAction("Index", "Home");
+            }
         }
 
         // GET: Ticket_Buying_Transactions/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.Ticket_Buying_Transactions == null)
+            if (Super_UserController.currentUser == "")
             {
-                return NotFound();
-            }
+                if (id == null || _context.Ticket_Buying_Transactions == null)
+                {
+                    return NotFound();
+                }
 
-            var ticket_Buying_Transactions = await _context.Ticket_Buying_Transactions
-                .FirstOrDefaultAsync(m => m.ticket_id == id);
-            if (ticket_Buying_Transactions == null)
+                var ticket_Buying_Transactions = await _context.Ticket_Buying_Transactions
+                    .FirstOrDefaultAsync(m => m.ticket_id == id);
+                if (ticket_Buying_Transactions == null)
+                {
+                    return NotFound();
+                }
+
+                return View(ticket_Buying_Transactions);
+            }
+            else
             {
-                return NotFound();
+                TempData["alertMessage"] = "You can not access this page.";
+                return RedirectToAction("Index", "Home");
             }
-
-            return View(ticket_Buying_Transactions);
         }
 
         // POST: Ticket_Buying_Transactions/Delete/5
@@ -139,18 +185,26 @@ namespace SportAssociation.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.Ticket_Buying_Transactions == null)
+            if (Super_UserController.currentUser == "")
             {
-                return Problem("Entity set 'ApplicationDbContext.Ticket_Buying_Transactions'  is null.");
+                if (_context.Ticket_Buying_Transactions == null)
+                {
+                    return Problem("Entity set 'ApplicationDbContext.Ticket_Buying_Transactions'  is null.");
+                }
+                var ticket_Buying_Transactions = await _context.Ticket_Buying_Transactions.FindAsync(id);
+                if (ticket_Buying_Transactions != null)
+                {
+                    _context.Ticket_Buying_Transactions.Remove(ticket_Buying_Transactions);
+                }
+
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
             }
-            var ticket_Buying_Transactions = await _context.Ticket_Buying_Transactions.FindAsync(id);
-            if (ticket_Buying_Transactions != null)
+            else
             {
-                _context.Ticket_Buying_Transactions.Remove(ticket_Buying_Transactions);
+                TempData["alertMessage"] = "You can not access this page.";
+                return RedirectToAction("Index", "Home");
             }
-            
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
         }
 
         private bool Ticket_Buying_TransactionsExists(int id)

@@ -22,31 +22,45 @@ namespace SportAssociation.Controllers
         // GET: Stadia
         public async Task<IActionResult> Index()
         {
-              return View(await _context.Stadium.ToListAsync());
+            if(Super_UserController.currentUser == "System_Admin")
+                return View(await _context.Stadium.ToListAsync());
+            TempData["alertMessage"] = "You can not access this page.";
+            return RedirectToAction("Index", "Home");
         }
 
         // GET: Stadia/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.Stadium == null)
+            if (Super_UserController.currentUser == "System_Admin")
             {
-                return NotFound();
-            }
+                if (id == null || _context.Stadium == null)
+                {
+                    return NotFound();
+                }
 
-            var stadium = await _context.Stadium
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (stadium == null)
+                var stadium = await _context.Stadium
+                    .FirstOrDefaultAsync(m => m.Id == id);
+                if (stadium == null)
+                {
+                    return NotFound();
+                }
+
+                return View(stadium);
+            }
+            else
             {
-                return NotFound();
+                TempData["alertMessage"] = "You can not access this page.";
+                return RedirectToAction("Index", "Home");
             }
-
-            return View(stadium);
         }
 
         // GET: Stadia/Create
         public IActionResult Create()
         {
-            return View();
+            if(Super_UserController.currentUser == "System_Admin")
+                return View();
+            TempData["alertMessage"] = "You can not access this page.";
+            return RedirectToAction("Index", "Home");
         }
 
         // POST: Stadia/Create
@@ -56,45 +70,61 @@ namespace SportAssociation.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,Capacity,Location,Status")] Stadium stadium)
         {
-            if (ModelState.IsValid)
+            if (Super_UserController.currentUser == "System_Admin")
             {
-                var outputSQLParam = new Microsoft.Data.SqlClient.SqlParameter("@out", System.Data.SqlDbType.Bit) { Direction = System.Data.ParameterDirection.Output };
-                _context.Database.ExecuteSqlRaw("exec dbo.checkStadiumExists @stadium_name='" + stadium.Name + "', @out={0} out", outputSQLParam);
-
-                bool output = false;
-
-                if (outputSQLParam.Value != DBNull.Value)
+                if (ModelState.IsValid)
                 {
-                    output = (bool)outputSQLParam.Value;
-                }
+                    var outputSQLParam = new Microsoft.Data.SqlClient.SqlParameter("@out", System.Data.SqlDbType.Bit) { Direction = System.Data.ParameterDirection.Output };
+                    _context.Database.ExecuteSqlRaw("exec dbo.checkStadiumExists @stadium_name='" + stadium.Name + "', @out={0} out", outputSQLParam);
 
-                if (output)
-                {
-                    TempData["alertMessage"] = "Stadium already exists!";
-                    return View();
-                }
+                    bool output = false;
 
-                _context.Add(stadium);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                    if (outputSQLParam.Value != DBNull.Value)
+                    {
+                        output = (bool)outputSQLParam.Value;
+                    }
+
+                    if (output)
+                    {
+                        TempData["alertMessage"] = "Stadium already exists!";
+                        return View();
+                    }
+
+                    _context.Add(stadium);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+                return View(stadium);
             }
-            return View(stadium);
+            else
+            {
+                TempData["alertMessage"] = "You can not access this page.";
+                return RedirectToAction("Index", "Home");
+            }
         }
 
         // GET: Stadia/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Stadium == null)
+            if (Super_UserController.currentUser == "System_Admin")
             {
-                return NotFound();
-            }
+                if (id == null || _context.Stadium == null)
+                {
+                    return NotFound();
+                }
 
-            var stadium = await _context.Stadium.FindAsync(id);
-            if (stadium == null)
-            {
-                return NotFound();
+                var stadium = await _context.Stadium.FindAsync(id);
+                if (stadium == null)
+                {
+                    return NotFound();
+                }
+                return View(stadium);
             }
-            return View(stadium);
+            else
+            {
+                TempData["alertMessage"] = "You can not access this page.";
+                return RedirectToAction("Index", "Home");
+            }
         }
 
         // POST: Stadia/Edit/5
@@ -104,50 +134,66 @@ namespace SportAssociation.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Capacity,Location,Status")] Stadium stadium)
         {
-            if (id != stadium.Id)
+            if (Super_UserController.currentUser == "System_Admin")
             {
-                return NotFound();
-            }
+                if (id != stadium.Id)
+                {
+                    return NotFound();
+                }
 
-            if (ModelState.IsValid)
-            {
-                try
+                if (ModelState.IsValid)
                 {
-                    _context.Update(stadium);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!StadiumExists(stadium.Id))
+                    try
                     {
-                        return NotFound();
+                        _context.Update(stadium);
+                        await _context.SaveChangesAsync();
                     }
-                    else
+                    catch (DbUpdateConcurrencyException)
                     {
-                        throw;
+                        if (!StadiumExists(stadium.Id))
+                        {
+                            return NotFound();
+                        }
+                        else
+                        {
+                            throw;
+                        }
                     }
+                    return RedirectToAction(nameof(Index));
                 }
-                return RedirectToAction(nameof(Index));
+                return View(stadium);
             }
-            return View(stadium);
+            else
+            {
+                TempData["alertMessage"] = "You can not access this page.";
+                return RedirectToAction("Index", "Home");
+            }
         }
 
         // GET: Stadia/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.Stadium == null)
+            if (Super_UserController.currentUser == "System_Admin")
             {
-                return NotFound();
-            }
+                if (id == null || _context.Stadium == null)
+                {
+                    return NotFound();
+                }
 
-            var stadium = await _context.Stadium
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (stadium == null)
+                var stadium = await _context.Stadium
+                    .FirstOrDefaultAsync(m => m.Id == id);
+                if (stadium == null)
+                {
+                    return NotFound();
+                }
+
+                return View(stadium);
+            }
+            else
             {
-                return NotFound();
+                TempData["alertMessage"] = "You can not access this page.";
+                return RedirectToAction("Index", "Home");
             }
-
-            return View(stadium);
         }
 
         // POST: Stadia/Delete/5
@@ -155,8 +201,16 @@ namespace SportAssociation.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            _context.Database.ExecuteSqlRaw("exec dbo.deleteStadiumHelper '" + id + "';");
-            return RedirectToAction(nameof(Index));
+            if (Super_UserController.currentUser == "System_Admin")
+            {
+                _context.Database.ExecuteSqlRaw("exec dbo.deleteStadiumHelper '" + id + "';");
+                return RedirectToAction(nameof(Index));
+            }
+            else
+            {
+                TempData["alertMessage"] = "You can not access this page.";
+                return RedirectToAction("Index", "Home");
+            }
         }
 
         private bool StadiumExists(int id)

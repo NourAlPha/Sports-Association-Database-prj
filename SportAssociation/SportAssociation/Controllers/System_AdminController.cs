@@ -22,31 +22,45 @@ namespace SportAssociation.Controllers
         // GET: System_Admin
         public async Task<IActionResult> Index()
         {
-              return View(await _context.System_Admin.ToListAsync());
+            if(Super_UserController.currentUser == "System_Admin")
+                return View(await _context.System_Admin.ToListAsync());
+            TempData["alertMessage"] = "You can not access this page.";
+            return RedirectToAction("Index", "Home");
         }
 
         // GET: System_Admin/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.System_Admin == null)
+            if (Super_UserController.currentUser == "")
             {
-                return NotFound();
-            }
+                if (id == null || _context.System_Admin == null)
+                {
+                    return NotFound();
+                }
 
-            var system_Admin = await _context.System_Admin
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (system_Admin == null)
+                var system_Admin = await _context.System_Admin
+                    .FirstOrDefaultAsync(m => m.Id == id);
+                if (system_Admin == null)
+                {
+                    return NotFound();
+                }
+
+                return View(system_Admin);
+            }
+            else
             {
-                return NotFound();
+                TempData["alertMessage"] = "You can not access this page.";
+                return RedirectToAction("Index", "Home");
             }
-
-            return View(system_Admin);
         }
 
         // GET: System_Admin/Create
         public IActionResult Create()
         {
-            return View();
+            if(Super_UserController.currentUser == "")
+                return View();
+            TempData["alertMessage"] = "You can not access this page.";
+            return RedirectToAction("Index", "Home");
         }
 
         // POST: System_Admin/Create
@@ -56,29 +70,45 @@ namespace SportAssociation.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,Username")] System_Admin system_Admin)
         {
-            if (ModelState.IsValid)
+            if (Super_UserController.currentUser == "")
             {
-                _context.Add(system_Admin);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                if (ModelState.IsValid)
+                {
+                    _context.Add(system_Admin);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+                return View(system_Admin);
             }
-            return View(system_Admin);
+            else
+            {
+                TempData["alertMessage"] = "You can not access this page.";
+                return RedirectToAction("Index", "Home");
+            }
         }
 
         // GET: System_Admin/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.System_Admin == null)
+            if (Super_UserController.currentUser == "")
             {
-                return NotFound();
-            }
+                if (id == null || _context.System_Admin == null)
+                {
+                    return NotFound();
+                }
 
-            var system_Admin = await _context.System_Admin.FindAsync(id);
-            if (system_Admin == null)
-            {
-                return NotFound();
+                var system_Admin = await _context.System_Admin.FindAsync(id);
+                if (system_Admin == null)
+                {
+                    return NotFound();
+                }
+                return View(system_Admin);
             }
-            return View(system_Admin);
+            else
+            {
+                TempData["alertMessage"] = "You can not access this page.";
+                return RedirectToAction("Index", "Home");
+            }
         }
 
         // POST: System_Admin/Edit/5
@@ -88,50 +118,66 @@ namespace SportAssociation.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Username")] System_Admin system_Admin)
         {
-            if (id != system_Admin.Id)
+            if (Super_UserController.currentUser == "")
             {
-                return NotFound();
-            }
+                if (id != system_Admin.Id)
+                {
+                    return NotFound();
+                }
 
-            if (ModelState.IsValid)
-            {
-                try
+                if (ModelState.IsValid)
                 {
-                    _context.Update(system_Admin);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!System_AdminExists(system_Admin.Id))
+                    try
                     {
-                        return NotFound();
+                        _context.Update(system_Admin);
+                        await _context.SaveChangesAsync();
                     }
-                    else
+                    catch (DbUpdateConcurrencyException)
                     {
-                        throw;
+                        if (!System_AdminExists(system_Admin.Id))
+                        {
+                            return NotFound();
+                        }
+                        else
+                        {
+                            throw;
+                        }
                     }
+                    return RedirectToAction(nameof(Index));
                 }
-                return RedirectToAction(nameof(Index));
+                return View(system_Admin);
             }
-            return View(system_Admin);
+            else
+            {
+                TempData["alertMessage"] = "You can not access this page.";
+                return RedirectToAction("Index", "Home");
+            }
         }
 
         // GET: System_Admin/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.System_Admin == null)
+            if (Super_UserController.currentUser == "")
             {
-                return NotFound();
-            }
+                if (id == null || _context.System_Admin == null)
+                {
+                    return NotFound();
+                }
 
-            var system_Admin = await _context.System_Admin
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (system_Admin == null)
+                var system_Admin = await _context.System_Admin
+                    .FirstOrDefaultAsync(m => m.Id == id);
+                if (system_Admin == null)
+                {
+                    return NotFound();
+                }
+
+                return View(system_Admin);
+            }
+            else
             {
-                return NotFound();
+                TempData["alertMessage"] = "You can not access this page.";
+                return RedirectToAction("Index", "Home");
             }
-
-            return View(system_Admin);
         }
 
         // POST: System_Admin/Delete/5
@@ -139,18 +185,26 @@ namespace SportAssociation.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.System_Admin == null)
+            if (Super_UserController.currentUser == "")
             {
-                return Problem("Entity set 'ApplicationDbContext.System_Admin'  is null.");
+                if (_context.System_Admin == null)
+                {
+                    return Problem("Entity set 'ApplicationDbContext.System_Admin'  is null.");
+                }
+                var system_Admin = await _context.System_Admin.FindAsync(id);
+                if (system_Admin != null)
+                {
+                    _context.System_Admin.Remove(system_Admin);
+                }
+
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
             }
-            var system_Admin = await _context.System_Admin.FindAsync(id);
-            if (system_Admin != null)
+            else
             {
-                _context.System_Admin.Remove(system_Admin);
+                TempData["alertMessage"] = "You can not access this page.";
+                return RedirectToAction("Index", "Home");
             }
-            
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
         }
 
         private bool System_AdminExists(int id)

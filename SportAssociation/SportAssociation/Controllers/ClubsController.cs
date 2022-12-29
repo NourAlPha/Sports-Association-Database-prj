@@ -24,31 +24,45 @@ namespace SportAssociation.Controllers
 
         public async Task<IActionResult> Index()
         {
-              return View(await _context.Club.ToListAsync());
+            if(Super_UserController.currentUser == "System_Admin")
+                return View(await _context.Club.ToListAsync());
+            TempData["alertMessage"] = "You can not access this page.";
+            return RedirectToAction("Index", "Home");
         }
 
         // GET: Clubs/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.Club == null)
+            if (Super_UserController.currentUser == "System_Admin")
             {
-                return NotFound();
-            }
+                if (id == null || _context.Club == null)
+                {
+                    return NotFound();
+                }
 
-            var club = await _context.Club
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (club == null)
+                var club = await _context.Club
+                    .FirstOrDefaultAsync(m => m.Id == id);
+                if (club == null)
+                {
+                    return NotFound();
+                }
+
+                return View(club);
+            }
+            else
             {
-                return NotFound();
+                TempData["alertMessage"] = "You can not access this page.";
+                return RedirectToAction("Index", "Home");
             }
-
-            return View(club);
         }
 
         // GET: Clubs/Create
         public IActionResult Create()
         {
-            return View();
+            if(Super_UserController.currentUser == "System_Admin")
+                return View();
+            TempData["alertMessage"] = "You can not access this page.";
+            return RedirectToAction("Index", "Home");
         }
 
         // POST: Clubs/Create
@@ -58,44 +72,60 @@ namespace SportAssociation.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,name,location")] Club club)
         {
-            if (ModelState.IsValid)
+            if (Super_UserController.currentUser == "System_Admin")
             {
-                var outputSQLParam = new Microsoft.Data.SqlClient.SqlParameter("@out", System.Data.SqlDbType.Bit) { Direction = System.Data.ParameterDirection.Output };
-                _context.Database.ExecuteSqlRaw("exec dbo.checkClubExists @club_name='" + club.name + "', @out={0} out", outputSQLParam);
-
-                bool output = false;
-
-                if (outputSQLParam.Value != DBNull.Value)
+                if (ModelState.IsValid)
                 {
-                    output = (bool)outputSQLParam.Value;
-                }
+                    var outputSQLParam = new Microsoft.Data.SqlClient.SqlParameter("@out", System.Data.SqlDbType.Bit) { Direction = System.Data.ParameterDirection.Output };
+                    _context.Database.ExecuteSqlRaw("exec dbo.checkClubExists @club_name='" + club.name + "', @out={0} out", outputSQLParam);
 
-                if (output)
-                {
-                    TempData["alertMessage"] = "Club already exists!";
-                    return View();
+                    bool output = false;
+
+                    if (outputSQLParam.Value != DBNull.Value)
+                    {
+                        output = (bool)outputSQLParam.Value;
+                    }
+
+                    if (output)
+                    {
+                        TempData["alertMessage"] = "Club already exists!";
+                        return View();
+                    }
+                    _context.Add(club);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
                 }
-                _context.Add(club);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return View(club);
             }
-            return View(club);
+            else
+            {
+                TempData["alertMessage"] = "You can not access this page.";
+                return RedirectToAction("Index", "Home");
+            }
         }
 
         // GET: Clubs/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Club == null)
+            if (Super_UserController.currentUser == "System_Admin")
             {
-                return NotFound();
-            }
+                if (id == null || _context.Club == null)
+                {
+                    return NotFound();
+                }
 
-            var club = await _context.Club.FindAsync(id);
-            if (club == null)
-            {
-                return NotFound();
+                var club = await _context.Club.FindAsync(id);
+                if (club == null)
+                {
+                    return NotFound();
+                }
+                return View(club);
             }
-            return View(club);
+            else
+            {
+                TempData["alertMessage"] = "You can not access this page.";
+                return RedirectToAction("Index", "Home");
+            }
         }
 
         // POST: Clubs/Edit/5
@@ -105,50 +135,66 @@ namespace SportAssociation.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,name,location")] Club club)
         {
-            if (id != club.Id)
+            if (Super_UserController.currentUser == "System_Admin")
             {
-                return NotFound();
-            }
+                if (id != club.Id)
+                {
+                    return NotFound();
+                }
 
-            if (ModelState.IsValid)
-            {
-                try
+                if (ModelState.IsValid)
                 {
-                    _context.Update(club);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ClubExists(club.Id))
+                    try
                     {
-                        return NotFound();
+                        _context.Update(club);
+                        await _context.SaveChangesAsync();
                     }
-                    else
+                    catch (DbUpdateConcurrencyException)
                     {
-                        throw;
+                        if (!ClubExists(club.Id))
+                        {
+                            return NotFound();
+                        }
+                        else
+                        {
+                            throw;
+                        }
                     }
+                    return RedirectToAction(nameof(Index));
                 }
-                return RedirectToAction(nameof(Index));
+                return View(club);
             }
-            return View(club);
+            else
+            {
+                TempData["alertMessage"] = "You can not access this page.";
+                return RedirectToAction("Index", "Home");
+            }
         }
 
         // GET: Clubs/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.Club == null)
+            if (Super_UserController.currentUser == "System_Admin")
             {
-                return NotFound();
-            }
+                if (id == null || _context.Club == null)
+                {
+                    return NotFound();
+                }
 
-            var club = await _context.Club
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (club == null)
+                var club = await _context.Club
+                    .FirstOrDefaultAsync(m => m.Id == id);
+                if (club == null)
+                {
+                    return NotFound();
+                }
+
+                return View(club);
+            }
+            else
             {
-                return NotFound();
+                TempData["alertMessage"] = "You can not access this page.";
+                return RedirectToAction("Index", "Home");
             }
-
-            return View(club);
         }
 
         // POST: Clubs/Delete/5
@@ -156,8 +202,16 @@ namespace SportAssociation.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            _context.Database.ExecuteSqlRaw("exec dbo.deleteClubHelper '" + id + "';");
-            return RedirectToAction(nameof(Index));
+            if (Super_UserController.currentUser == "System_Admin")
+            {
+                _context.Database.ExecuteSqlRaw("exec dbo.deleteClubHelper '" + id + "';");
+                return RedirectToAction(nameof(Index));
+            }
+            else
+            {
+                TempData["alertMessage"] = "You can not access this page.";
+                return RedirectToAction("Index", "Home");
+            }
         }
 
         private bool ClubExists(int id)

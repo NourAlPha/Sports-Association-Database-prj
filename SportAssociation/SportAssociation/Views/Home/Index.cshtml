@@ -2,6 +2,13 @@
     ViewData["Title"] = "Home Page";
 }
 
+@if (TempData["alertMessage"] != null)
+{
+    <script type="text/javascript">
+        alert('@TempData["alertMessage"]');
+    </script>
+}
+
 <div class="text-center">
     <h1 class="display-4">Welcome to our Sports Association Project!</h1>
     <p>This project is done by: Omar Osama, Mohamed Ahmed, Yosef Koka & Nour Eldien Ayman</p>
